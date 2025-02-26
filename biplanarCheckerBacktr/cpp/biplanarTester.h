@@ -1,0 +1,46 @@
+#ifndef BIPLANARTESTER_H
+#define BIPLANARTESTER_H
+
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/boyer_myrvold_planar_test.hpp>
+
+using namespace boost;
+using namespace std;
+
+/// Graph types
+using Graph = adjacency_list<vecS, vecS, undirectedS>;
+using Edge = std::pair<int, int>;
+
+/// Global var
+extern int maxEdges;
+
+/// Returns whether given graph is planar.
+bool isPlanar(Graph& g);
+
+/// Helper function to output edge partitions.
+void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2);
+
+/// Prints edges of a given graph (for debugging purposes).
+void printEdges(const vector<Edge>& edges);
+
+////// Graph constructors
+/// Returns path edge-set on [numVertices] vertices.
+vector<Edge>* pathGraph(int numVertices);
+
+/// Returns completeGraph edge-set on [numVertices] vertices.
+vector<Edge>* completeGraph(int numVertices);
+
+////// Graph operations
+/// Returns the strong product of two graphs.
+vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2);
+
+/// Preprocess edge list to order by edge difficulty.
+vector<Edge>* preprocessEdges(vector<Edge>* edges, int n);
+
+/// Back-tracking recursive implementation of biplanarity checker.
+bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, vector<Edge>& partition1, vector<Edge>& partition2);
+
+#endif // BIPLANARTESTER_H

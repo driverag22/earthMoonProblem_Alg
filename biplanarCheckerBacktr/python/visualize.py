@@ -15,7 +15,7 @@ def read_partitions(file_path):
             current_partition = partition2
             continue
         u, v = map(int, line.split())
-        current_partition.append((u, v))
+        current_partition.append((u+1, v+1))
 
     return partition1, partition2
 
@@ -38,5 +38,5 @@ def draw_graph(partition1, partition2):
     plt.show()
 
 if __name__ == "__main__":
-    partition1, partition2 = read_partitions("partitions.txt")
+    partition1, partition2 = read_partitions("data/partitions.txt")
     draw_graph(partition1, partition2)
