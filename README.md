@@ -55,5 +55,5 @@ You can also manually define the graph.
 Drawing the graph (if biplanar) can be done via `make drawPart` (to get the graph with one partition in red, the other in blue) 
 and `make plane` to get the plane drawings of both partitions.
 To simply draw an arbitrary graph (not partitioned) use `make draw` and give the (relative) file path as input when asked
-(e.g. `c5_44443.txt`).
+(e.g. `c5_44443.txt`), or pass it directly (e.g. `make draw c5_44443.txt`).
 

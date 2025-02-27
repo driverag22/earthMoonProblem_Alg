@@ -30,13 +30,13 @@ run: all
 
 # Run the Python script
 drawPart:
-	python3 $(PYTHON_DIR)/visualize.py
+	python $(PYTHON_DIR)/visualize.py
 
 plane:
-	python3 $(PYTHON_DIR)/visualize_plane.py
+	python $(PYTHON_DIR)/visualize_plane.py
 
 draw:
-	python3 $(PYTHON_DIR)/drawGraph.py
+	python $(PYTHON_DIR)/drawGraph.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Clean compiled files
 clean:

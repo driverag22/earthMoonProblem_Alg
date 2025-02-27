@@ -26,7 +26,7 @@ void outputPartitions(Graph& g1, Graph& g2) {
 /// Prints edges of a given graph (for debugging purposes).
 void printEdges(const vector<Edge>& edges) {
     for (const auto& e : edges) {
-        cout << "(" << e.first << ", " << e.second << ")\n";
+        cout << e.first << " " << e.second << endl;
     }
 }
 
