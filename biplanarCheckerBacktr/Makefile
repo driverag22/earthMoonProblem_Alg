@@ -32,6 +32,9 @@ run: all
 draw:
 	python3 $(PYTHON_DIR)/visualize.py
 
+plane:
+	python3 $(PYTHON_DIR)/visualize_plane.py
+
 # Clean compiled files
 clean:
 	rm -rf $(BIN_DIR) $(SRC_DIR)/*.o

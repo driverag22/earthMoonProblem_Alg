@@ -38,5 +38,7 @@ def draw_graph(partition1, partition2):
     plt.show()
 
 if __name__ == "__main__":
-    partition1, partition2 = read_partitions("data/partitions.txt")
-    draw_graph(partition1, partition2)
+    partition1, partition2 = read_partitions("data/test.txt")
+
+    if partition1 and partition2:
+        draw_graph(partition1, partition2)
