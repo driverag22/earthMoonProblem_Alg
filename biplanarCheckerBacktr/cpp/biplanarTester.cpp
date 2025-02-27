@@ -40,6 +40,16 @@ vector<Edge>* pathGraph(int numVertices) {
     return edges;
 }
 
+/// Returns cycle edge-set on [numVertices] vertices.
+vector<Edge>* cycleGraph(int numVertices) {
+    auto* edges = new vector<Edge>();
+    for (int i = 0; i < numVertices - 1; ++i) {
+        edges->push_back({i, i + 1});
+    }
+    edges->push_back({0, numVertices - 1});
+    return edges;
+}
+
 /// Returns completeGraph edge-set on [numVertices] vertices.
 vector<Edge>* completeGraph(int numVertices) {
     auto* edges = new vector<Edge>();
@@ -53,6 +63,13 @@ vector<Edge>* completeGraph(int numVertices) {
 //////
 
 ////// Graph operations
+/// Removes all edges connected to a specific vertex.
+void removeVertexEdges(vector<Edge>& edges, int vertex) {
+    edges.erase(remove_if(edges.begin(), edges.end(), 
+                [vertex](const Edge& e) { return e.first == vertex || e.second == vertex; }),
+                edges.end());
+}
+
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2) {
     // create adjacency matrices for G1 and G2 
@@ -120,6 +137,11 @@ bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
     if ((size_t)index == edges.size()) {
         if (isPlanar(g1) && isPlanar(g2)) {
             cout << "Graph is biplanar!" << endl;
+            cout << "Number of edges:" << endl;
+            cout << "    |E(G1)| = " << num_edges(g1) << endl;
+            cout << "    |E(G2)| = " << num_edges(g2) << endl;
+            cout << "    |E(G1)| + |E(G2)| = " << num_edges(g1) + num_edges(g2) << endl;
+            cout << "    should be = " << edges.size() << endl;
             outputPartitions(g1, g2);
             return true;
         }
