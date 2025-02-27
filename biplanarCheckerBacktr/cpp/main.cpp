@@ -7,11 +7,14 @@ int main() {
     maxEdges = 3 * n - 6;
     
     auto* edges = strongProduct(pathGraph(n1), n1, completeGraph(n2), n2);
-    edges = preprocessEdges(edges, n);
+    printEdges(*edges);
+    preprocessEdges(*edges, n);
+    cout << endl;
+    cout << endl;
+    printEdges(*edges);
+
     Graph g1(n), g2(n);
-    vector<Edge> partition1, partition2;
-    
-    if (!isBiplanar(*edges, 0, g1, g2, partition1, partition2)) {
+    if (!isBiplanar(*edges, 0, g1, g2)) {
         cout << "Graph is not biplanar." << endl;
     }
     

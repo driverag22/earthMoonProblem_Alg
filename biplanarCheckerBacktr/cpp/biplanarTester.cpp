@@ -7,16 +7,17 @@ bool isPlanar(Graph& g) {
 }
 
 /// Helper function to output edge partitions.
-void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2) {
+/* void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2) { */
+void outputPartitions(Graph& g1, Graph& g2) {
     ofstream file("data/partitions.txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;
         return;
     }
 
-    for (const auto& e : partition1) file << e.first << " " << e.second << "\n";
+    for (const auto& e : make_iterator_range(edges(g1))) file << source(e, g1) << " " << target(e, g1) << "\n";
     file << "\n";
-    for (const auto& e : partition2) file << e.first << " " << e.second << "\n";
+    for (const auto& e : make_iterator_range(edges(g2))) file << source(e, g2) << " " << target(e, g2) << "\n";
 
     file.close();
     cout << "Partitions saved to partitions.txt" << endl;
@@ -54,53 +55,72 @@ vector<Edge>* completeGraph(int numVertices) {
 ////// Graph operations
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2) {
-    auto* productEdges = new vector<Edge>();
+    // create adjacency matrices for G1 and G2 
+    // to quickly check if (u,v) is an edge of either
+    vector<vector<bool>> adj1(n1, vector<bool>(n1, false));
+    vector<vector<bool>> adj2(n2, vector<bool>(n2, false));
+    for (const Edge& e : *graph1) {
+        int u = e.first, v = e.second;
+        adj1[u][v] = true;
+        adj1[v][u] = true;
+    }
+    for (const Edge& e : *graph2) {
+        int u = e.first, v = e.second;
+        adj2[u][v] = true;
+        adj2[v][u] = true;
+    }
     
-    for (int i = 0; i < n1; ++i) {
-        for (int j = 0; j < n2; ++j) {
-            // Connect based on edges in graph1
-            for (const auto& e : *graph1) {
-                productEdges->push_back({e.first * n2 + j, e.second * n2 + j});
-            }
-            
-            // Connect based on edges in graph2
-            for (const auto& e : *graph2) {
-                productEdges->push_back({i * n2 + e.first, i * n2 + e.second});
-            }
-            
-            // Strong product cross edges
-            if (i + 1 < n1) {
-                for (int k = 0; k < n2; ++k) {
-                    productEdges->push_back({i * n2 + j, (i + 1) * n2 + k});
+    vector<Edge>* productEdges = new vector<Edge>();
+    // we store the cartesian product in a 1D array
+    // flattening: (a,b) in V(G1)*V(G2) = a * n2 + b
+
+    // go over all possible vertices
+    for (int u = 0; u < n1; ++u) {
+        for (int v = 0; v < n2; ++v) {
+            int index1 = u * n2 + v; // index1 \cong (u, v)
+
+            // we add edge iff ( (u = u2 or u ~ u2) and (v = v2 or v ~ v2)
+            for (int u2 = 0; u2 < n1; ++u2) {
+                if (u != u2 && !adj1[u][u2]) // skip if not(u = u2 or u ~ u2)
+                    continue;
+                for (int v2 = 0; v2 < n2; ++v2) {
+                    if (v != v2 && !adj2[v][v2]) // skip if not(v = v2 or v ~ v2)
+                        continue;
+
+                    int index2 = u2 * n2 + v2; // index2 \cong (u2, v2)
+
+                    if (index1 < index2) {
+                        productEdges->push_back(make_pair(index1, index2));
+                    }
                 }
             }
         }
     }
+    
     return productEdges;
 }
 //////
 
 /// Preprocess edge list to order by edge difficulty.
-vector<Edge> preprocessEdges(const vector<Edge>& edges, int n) {
+void preprocessEdges(vector<Edge>& edges, int n) {
     vector<int> degree(n, 0);
+
     for (const auto& e : edges) {
         degree[e.first]++;
         degree[e.second]++;
     }
     
     sort(edges.begin(), edges.end(), [&degree](const Edge& a, const Edge& b) {
-        return max(degree[a.first], degree[a.second]) > max(degree[b.first], degree[b.second]);
+        return (degree[a.first] + degree[a.second]) > (degree[b.first] + degree[b.second]);
     });
-
-    return edges;
 }
 
 /// Back-tracking recursive implementation of biplanarity checker.
-bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, vector<Edge>& partition1, vector<Edge>& partition2) {
+bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
     if ((size_t)index == edges.size()) {
         if (isPlanar(g1) && isPlanar(g2)) {
             cout << "Graph is biplanar!" << endl;
-            outputPartitions(partition1, partition2);
+            outputPartitions(g1, g2);
             return true;
         }
         return false;
@@ -115,17 +135,13 @@ bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, vector<Edg
         return false;
     
     add_edge(edges[index].first, edges[index].second, g1);
-    partition1.push_back(edges[index]);
-    if (isBiplanar(edges, index + 1, g1, g2, partition1, partition2))
+    if (isBiplanar(edges, index + 1, g1, g2))
         return true;
-    partition1.pop_back();
     remove_edge(edges[index].first, edges[index].second, g1);
-    
+
     add_edge(edges[index].first, edges[index].second, g2);
-    partition2.push_back(edges[index]);
-    if (isBiplanar(edges, index + 1, g1, g2, partition1, partition2))
+    if (isBiplanar(edges, index + 1, g1, g2))
         return true;
-    partition2.pop_back();
     remove_edge(edges[index].first, edges[index].second, g2);
     
     return false;

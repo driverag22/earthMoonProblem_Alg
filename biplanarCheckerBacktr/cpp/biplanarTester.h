@@ -12,7 +12,7 @@ using namespace std;
 
 /// Graph types
 using Graph = adjacency_list<vecS, vecS, undirectedS>;
-using Edge = std::pair<int, int>;
+using Edge = pair<int, int>;
 
 /// Global var
 extern int maxEdges;
@@ -21,7 +21,8 @@ extern int maxEdges;
 bool isPlanar(Graph& g);
 
 /// Helper function to output edge partitions.
-void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2);
+/* void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2); */
+void outputPartitions(Graph& g1, Graph& g2);
 
 /// Prints edges of a given graph (for debugging purposes).
 void printEdges(const vector<Edge>& edges);
@@ -38,9 +39,9 @@ vector<Edge>* completeGraph(int numVertices);
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2);
 
 /// Preprocess edge list to order by edge difficulty.
-vector<Edge>* preprocessEdges(vector<Edge>* edges, int n);
+void preprocessEdges(vector<Edge>& edges, int n);
 
 /// Back-tracking recursive implementation of biplanarity checker.
-bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, vector<Edge>& partition1, vector<Edge>& partition2);
+bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2);
 
 #endif // BIPLANARTESTER_H
