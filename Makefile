@@ -29,11 +29,14 @@ run: all
 	./$(TARGET)
 
 # Run the Python script
-draw:
+drawPart:
 	python3 $(PYTHON_DIR)/visualize.py
 
 plane:
 	python3 $(PYTHON_DIR)/visualize_plane.py
+
+draw:
+	python3 $(PYTHON_DIR)/drawGraph.py
 
 # Clean compiled files
 clean:
