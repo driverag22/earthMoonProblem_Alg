@@ -30,10 +30,10 @@ run: all
 
 # Run the Python script
 drawPart:
-	python $(PYTHON_DIR)/visualize.py
+	python $(PYTHON_DIR)/visualize.py $(filter-out $@,$(MAKECMDGOALS))
 
 plane:
-	python $(PYTHON_DIR)/visualize_plane.py
+	python $(PYTHON_DIR)/visualize_plane.py $(filter-out $@,$(MAKECMDGOALS))
 
 draw:
 	python $(PYTHON_DIR)/drawGraph.py $(filter-out $@,$(MAKECMDGOALS))

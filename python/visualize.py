@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import sys
 
 def read_partitions(file_path):
     """Reads edge partitions from the given file."""
@@ -38,7 +39,12 @@ def draw_graph(partition1, partition2):
     plt.show()
 
 if __name__ == "__main__":
-    partition1, partition2 = read_partitions("data/partitions.txt")
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        file_path = "data/partitions.txt"
+
+    partition1, partition2 = read_partitions(file_path)
 
     if partition1 and partition2:
         draw_graph(partition1, partition2)
