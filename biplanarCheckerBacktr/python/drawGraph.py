@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import sys
 
 def read_partition(file_path):
     """Reads edge partitions from the given file."""
@@ -31,7 +32,11 @@ def draw_graph(partition):
     plt.show()
 
 if __name__ == "__main__":
-    partition  = read_partition("data/p3_k4.txt")
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        file_path = input("Enter the file name: ")
 
+    partition = read_partition(file_path)
     if partition:
         draw_graph(partition)
