@@ -156,15 +156,28 @@ bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
     if (!isPlanar(g1) || !isPlanar(g2))
         return false;
     
-    add_edge(edges[index].first, edges[index].second, g1);
-    if (isBiplanar(edges, index + 1, g1, g2))
-        return true;
-    remove_edge(edges[index].first, edges[index].second, g1);
+    // go for balanced partitions first
+    if (num_edges(g1) <= num_edges(g2)) {
+        add_edge(edges[index].first, edges[index].second, g1);
+        if (isBiplanar(edges, index + 1, g1, g2))
+            return true;
+        remove_edge(edges[index].first, edges[index].second, g1);
 
-    add_edge(edges[index].first, edges[index].second, g2);
-    if (isBiplanar(edges, index + 1, g1, g2))
-        return true;
-    remove_edge(edges[index].first, edges[index].second, g2);
+        add_edge(edges[index].first, edges[index].second, g2);
+        if (isBiplanar(edges, index + 1, g1, g2))
+            return true;
+        remove_edge(edges[index].first, edges[index].second, g2);
+    } else {
+        add_edge(edges[index].first, edges[index].second, g2);
+        if (isBiplanar(edges, index + 1, g1, g2))
+            return true;
+        remove_edge(edges[index].first, edges[index].second, g2);
+
+        add_edge(edges[index].first, edges[index].second, g1);
+        if (isBiplanar(edges, index + 1, g1, g2))
+            return true;
+        remove_edge(edges[index].first, edges[index].second, g1);
+    }
     
     return false;
 }
