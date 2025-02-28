@@ -28,21 +28,18 @@ $(TARGET): $(SRCS)
 run: all
 	./$(TARGET)
 
-# Run the Python script
+# Run the Python script to draw the two partitions
 drawPart:
 	python $(PYTHON_DIR)/visualize.py $(filter-out $@,$(MAKECMDGOALS))
 
+# Run the Python script to draw the two partitions separately as plane graphs
 plane:
 	python $(PYTHON_DIR)/visualize_plane.py $(filter-out $@,$(MAKECMDGOALS))
 
+# Run the Python script to draw a graph
 draw:
 	python $(PYTHON_DIR)/drawGraph.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Clean compiled files
 clean:
 	rm -rf $(BIN_DIR) $(SRC_DIR)/*.o
-
-# Ensure data directory exists before running the program
-prepare_data:
-	mkdir -p $(DATA_DIR)
-
