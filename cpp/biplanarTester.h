@@ -39,14 +39,14 @@ vector<Edge>* completeGraph(int numVertices);
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
-void removeVertexEdges(vector<Edge>& edges, int vertex);
+void removeVertexEdges(vector<Edge>* edges, int vertex);
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, 
                             const vector<Edge>* graph2, int n2);
 ////// 
 
 /// Preprocess edge list to order by edge difficulty.
-void preprocessEdges(vector<Edge>& edges, int n);
+void preprocessEdges(vector<Edge>* edges, int n);
 
 /// Back-tracking recursive implementation of biplanarity checker.
 bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2);

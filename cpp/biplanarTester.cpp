@@ -64,10 +64,10 @@ vector<Edge>* completeGraph(int numVertices) {
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
-void removeVertexEdges(vector<Edge>& edges, int vertex) {
-    edges.erase(remove_if(edges.begin(), edges.end(), 
+void removeVertexEdges(vector<Edge>* edges, int vertex) {
+    edges->erase(remove_if(edges->begin(), edges->end(), 
                 [vertex](const Edge& e) { return e.first == vertex || e.second == vertex; }),
-                edges.end());
+                edges->end());
 }
 
 /// Returns the strong product of two graphs.
@@ -119,15 +119,15 @@ vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edg
 //////
 
 /// Preprocess edge list to order by edge difficulty.
-void preprocessEdges(vector<Edge>& edges, int n) {
+void preprocessEdges(vector<Edge>* edges, int n) {
     vector<int> degree(n, 0);
 
-    for (const auto& e : edges) {
+    for (const auto& e : *edges) {
         degree[e.first]++;
         degree[e.second]++;
     }
     
-    sort(edges.begin(), edges.end(), [&degree](const Edge& a, const Edge& b) {
+    sort(edges->begin(), edges->end(), [&degree](const Edge& a, const Edge& b) {
         return (degree[a.first] + degree[a.second]) > (degree[b.first] + degree[b.second]);
     });
 }
