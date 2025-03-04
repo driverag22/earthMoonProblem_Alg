@@ -21,7 +21,7 @@ extern int maxEdges;
 bool isPlanar(Graph& g);
 
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2);
+void outputPartitions(Graph& g1, Graph& g2, Graph& g3);
 
 /// Prints edges of a given graph (for debugging purposes).
 void printEdges(const vector<Edge>& edges);
@@ -49,6 +49,6 @@ vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1,
 void preprocessEdges(vector<Edge>* edges, int n);
 
 /// Back-tracking recursive implementation of biplanarity checker.
-bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2);
+bool isTriplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, Graph& g3);
 
 #endif // BIPLANARTESTER_H

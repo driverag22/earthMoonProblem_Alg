@@ -1,4 +1,4 @@
-#include "biplanarTester.h"
+#include "triplanarTester.h"
 int maxEdges;
 
 /// Returns whether given graph is planar.
@@ -7,8 +7,7 @@ bool isPlanar(Graph& g) {
 }
 
 /// Helper function to output edge partitions.
-/* void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2) { */
-void outputPartitions(Graph& g1, Graph& g2) {
+void outputPartitions(Graph& g1, Graph& g2, Graph& g3) {
     ofstream file("data/partitions.txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;
@@ -18,6 +17,8 @@ void outputPartitions(Graph& g1, Graph& g2) {
     for (const auto& e : make_iterator_range(edges(g1))) file << source(e, g1) << " " << target(e, g1) << "\n";
     file << "\n";
     for (const auto& e : make_iterator_range(edges(g2))) file << source(e, g2) << " " << target(e, g2) << "\n";
+    file << "\n";
+    for (const auto& e : make_iterator_range(edges(g3))) file << source(e, g3) << " " << target(e, g3) << "\n";
 
     file.close();
     cout << "Partitions saved to partitions.txt" << endl;
@@ -133,51 +134,45 @@ void preprocessEdges(vector<Edge>* edges, int n) {
 }
 
 /// Back-tracking recursive implementation of biplanarity checker.
-bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
+bool isTriplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, Graph& g3) {
     if ((size_t)index == edges.size()) {
-        if (isPlanar(g1) && isPlanar(g2)) {
+        if (isPlanar(g1) && isPlanar(g2) && isPlanar(g3)) {
             cout << "Graph is biplanar!" << endl;
             cout << "Number of edges:" << endl;
             cout << "    |E(G1)| = " << num_edges(g1) << endl;
             cout << "    |E(G2)| = " << num_edges(g2) << endl;
-            cout << "    |E(G1)| + |E(G2)| = " << num_edges(g1) + num_edges(g2) << endl;
+            cout << "    |E(G3)| = " << num_edges(g3) << endl;
+            cout << "    |E(G1)| + |E(G2)| + |E(G3)| = " << num_edges(g1) + num_edges(g2) + num_edges(g3) << endl;
             cout << "    should be = " << edges.size() << endl;
-            outputPartitions(g1, g2);
+            outputPartitions(g1, g2, g3);
             return true;
         }
         return false;
     }
     
     // check edge bounds
-    if (num_edges(g1) > (size_t)maxEdges || num_edges(g2) > (size_t)maxEdges)
+    if (num_edges(g1) > (size_t)maxEdges || num_edges(g2) > (size_t)maxEdges || num_edges(g3) > (size_t)maxEdges)
         return false;
 
     // check still planar
-    if (!isPlanar(g1) || !isPlanar(g2))
+    if (!isPlanar(g1) || !isPlanar(g2) || !isPlanar(g3))
         return false;
     
     // go for balanced partitions first
-    if (num_edges(g1) <= num_edges(g2)) {
-        add_edge(edges[index].first, edges[index].second, g1);
-        if (isBiplanar(edges, index + 1, g1, g2))
-            return true;
-        remove_edge(edges[index].first, edges[index].second, g1);
+    add_edge(edges[index].first, edges[index].second, g1);
+    if (isTriplanar(edges, index + 1, g1, g2, g3))
+        return true;
+    remove_edge(edges[index].first, edges[index].second, g1);
 
-        add_edge(edges[index].first, edges[index].second, g2);
-        if (isBiplanar(edges, index + 1, g1, g2))
-            return true;
-        remove_edge(edges[index].first, edges[index].second, g2);
-    } else {
-        add_edge(edges[index].first, edges[index].second, g2);
-        if (isBiplanar(edges, index + 1, g1, g2))
-            return true;
-        remove_edge(edges[index].first, edges[index].second, g2);
+    add_edge(edges[index].first, edges[index].second, g2);
+    if (isTriplanar(edges, index + 1, g1, g2, g3))
+        return true;
+    remove_edge(edges[index].first, edges[index].second, g2);
 
-        add_edge(edges[index].first, edges[index].second, g1);
-        if (isBiplanar(edges, index + 1, g1, g2))
-            return true;
-        remove_edge(edges[index].first, edges[index].second, g1);
-    }
+    add_edge(edges[index].first, edges[index].second, g3);
+    if (isTriplanar(edges, index + 1, g1, g2, g3))
+        return true;
+    remove_edge(edges[index].first, edges[index].second, g3);
     
     return false;
 }
