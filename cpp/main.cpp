@@ -1,33 +1,32 @@
-#include "biplanarTester.h"
+#include "candidateBuilder.h"
 
 int main() {
-    // length of cycle/path, size of complete graphs
-    int n1 = 3, n2 = 4;
-    int n = n1 * n2;
-    maxEdges = 3 * n - 6;
-    
-    auto* edges = strongProduct(pathGraph(n1), n1, completeGraph(n2), n2);
-    // check edge bound before starting
-    if ((edges->size()) > (size_t)2*maxEdges) {
-        cout << "Graph cannot be biplanar, 6n-12 = " 
-            << 2*maxEdges << " but number of edges is "
-            << edges->size() << endl;
-        delete edges;
-        return 0;
-    }
-    preprocessEdges(edges, n);
-    // print stuff for testing
-    printEdges(*edges);
-    cout << "6n-12 = " << 2*maxEdges << " and number of edges is "
-        << edges->size() << endl;
+    for (int n = 50; n < 151; n++) {
+        cout << n << endl;
+        cout << endl;
+        for (int i = 0; i < 100; i++) {
+            // build max planar graphs on n vertices,
+            // take their graph union
+            Graph g1 = buildMaximalPlanarGraph(n);
+            Graph g2 = buildMaximalPlanarGraph(n);
+            Graph g = graphUnion(g1, g2);
 
-    Graph g1(n), g2(n);
-    // add first edge arbitrarily, it doesn't matter due to symmetry
-    add_edge((*edges)[0].first, (*edges)[0].second, g1);
-    if (!isBiplanar(*edges, 1, g1, g2)) {
-        cout << "Graph is not biplanar." << endl;
+            // save graph if chromatic number \geq 9 or 10
+            if (chromaticNumberAtLeast(g, 9)) {
+                outputGraph(g, "candidates9/graph_" + to_string(i) + "_" + to_string(n));
+                outputPartitions(g1, g2, "candidates9/partition_" + to_string(i) + "_" + to_string(n));
+                cout << "-------------------------------------------------" << endl;
+                cout << "Graph " << i << " is a candidate for 9!" << endl;
+                cout << "-------------------------------------------------" << endl;
+            }
+            if (chromaticNumberAtLeast(g, 10)) {
+                outputGraph(g, "candidates10/graph_" + to_string(i) + "_" + to_string(n));
+                outputPartitions(g1, g2, "candidates10/partition_" + to_string(i) + "_" + to_string(n));
+                cout << "-------------------------------------------------" << endl;
+                cout << "Graph " << i << " is a candidate for 10!" << endl;
+                cout << "-------------------------------------------------" << endl;
+            }
+        }
     }
-    
-    delete edges;
     return 0;
 }

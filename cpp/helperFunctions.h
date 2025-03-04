@@ -17,31 +17,46 @@ using Edge = pair<int, int>;
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g);
 
+/// Helper function to output graph.
+void outputGraph(Graph& g, string filename);
+
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2);
+void outputPartitions(Graph& g1, Graph& g2, string filename);
 
 /// Prints edges of a given graph (for debugging purposes).
+void printGraph(Graph& g);
+
+/// Prints edges of a given edge list (for debugging purposes).
 void printEdges(const vector<Edge>& edges);
 
 /// Checks if the chromatic number of graph g is at least k.
-bool hasChromaticNumber(Graph& g, int k);
+bool chromaticNumberAtLeast(Graph& g, int k);
 
 ////// Graph constructors
+/// Returns path Graph on [numVertices] vertices.
+Graph pathGraph(int numVertices);
+
+/// Returns cycle Graph on [numVertices] vertices.
+Graph cycleGraph(int numVertices);
+
+/// Returns complet Graph on [numVertices] vertices.
+Graph completeGraph(int numVertices);
+
 /// Returns path edge-set on [numVertices] vertices.
-vector<Edge>* pathGraph(int numVertices);
+vector<Edge>* pathGraphEdge(int numVertices);
 
 /// Returns cycleGraph edge-set on [numVertices] vertices.
-vector<Edge>* cycleGraph(int numVertices);
+vector<Edge>* cycleGraphEdge(int numVertices);
 
 /// Returns completeGraph edge-set on [numVertices] vertices.
-vector<Edge>* completeGraph(int numVertices);
+vector<Edge>* completeGraphEdge(int numVertices);
 ////// 
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
 void removeVertexEdges(vector<Edge>* edges, int vertex);
 
-/// Computes the union of two graphs over the same vertex set
+/// Computes the union of two graphs over the same vertex set [n-1]={0,...,n-1}
 Graph graphUnion(const Graph& g1, const Graph& g2);
 
 /// Returns the strong product of two graphs.

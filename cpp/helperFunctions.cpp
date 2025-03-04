@@ -5,10 +5,23 @@ bool isPlanar(Graph& g) {
     return boyer_myrvold_planarity_test(g);
 }
 
+/// Helper function to output graph.
+void outputGraph(Graph& g, string filename = "candidate") {
+    ofstream file("data/" + filename + ".txt");
+    if (!file) {
+        cerr << "Error opening file for writing!" << endl;
+        return;
+    }
+
+    for (const auto& e : make_iterator_range(edges(g))) file << source(e, g) << " " << target(e, g) << "\n";
+
+    file.close();
+    cout << "Graph saved to " << filename << ".txt" << endl;
+}
+
 /// Helper function to output edge partitions.
-/* void outputPartitions(const vector<Edge>& partition1, const vector<Edge>& partition2) { */
-void outputPartitions(Graph& g1, Graph& g2) {
-    ofstream file("data/partitions.txt");
+void outputPartitions(Graph& g1, Graph& g2, string filename = "partitions") {
+    ofstream file("data/" + filename + ".txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;
         return;
@@ -19,7 +32,12 @@ void outputPartitions(Graph& g1, Graph& g2) {
     for (const auto& e : make_iterator_range(edges(g2))) file << source(e, g2) << " " << target(e, g2) << "\n";
 
     file.close();
-    cout << "Partitions saved to partitions.txt" << endl;
+    cout << "Partitions saved to " << filename << ".txt" << endl;
+}
+
+/// Helper function to output edge partitions.
+void printGraph(Graph& g) {
+    for (const auto& e : make_iterator_range(edges(g))) cout << source(e, g) << " " << target(e, g) << "\n";
 }
 
 /// Prints edges of a given graph (for debugging purposes).
@@ -29,7 +47,7 @@ void printEdges(const vector<Edge>& edges) {
     }
 }
 
-// Recursively determines if g can be colored with maxColor colors
+/// Recursively determines if g can be colored with maxColor colors
 bool canColor(const Graph& g, int maxColors, vector<int>& colors, int index) {
     int n = num_vertices(g);
     if (index == n)
@@ -59,7 +77,7 @@ bool canColor(const Graph& g, int maxColors, vector<int>& colors, int index) {
 }
 
 /// Checks if the chromatic number of graph g is at least k.
-bool hasChromaticNumber(Graph& g, int k) {
+bool chromaticNumberAtLeast(Graph& g, int k) {
     int n = num_vertices(g);
     vector<int> colors(n, -1);
 
@@ -68,8 +86,38 @@ bool hasChromaticNumber(Graph& g, int k) {
 }
 
 ////// Graph constructors
+/// Returns path graph on [numVertices] vertices.
+Graph pathGraph(int numVertices) {
+    Graph G(numVertices);
+    for (int i = 0; i < numVertices - 1; ++i) {
+        add_edge(i, i + 1, G);
+    }
+    return G;
+}
+
+/// Returns cycle graph on [numVertices] vertices.
+Graph cycleGraph(int numVertices) {
+    Graph G(numVertices);
+    for (int i = 0; i < numVertices; ++i) {
+        int j = (i + 1) % numVertices;
+        add_edge(i, j, G);
+    }
+    return G;
+}
+
+/// Returns complete graph on [numVertices] vertices.
+Graph completeGraph(int numVertices) {
+    Graph G(numVertices);
+    for (int i = 0; i < numVertices; ++i) {
+        for (int j = i + 1; j < numVertices; ++j) {
+            add_edge(i, j, G);
+        }
+    }
+    return G;
+}
+
 /// Returns path edge-set on [numVertices] vertices.
-vector<Edge>* pathGraph(int numVertices) {
+vector<Edge>* pathGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
     for (int i = 0; i < numVertices - 1; ++i) {
         edges->push_back({i, i + 1});
@@ -78,17 +126,17 @@ vector<Edge>* pathGraph(int numVertices) {
 }
 
 /// Returns cycle edge-set on [numVertices] vertices.
-vector<Edge>* cycleGraph(int numVertices) {
+vector<Edge>* cycleGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
     for (int i = 0; i < numVertices - 1; ++i) {
-        edges->push_back({i, i + 1});
+        int j = (i + 1) % numVertices;
+        edges->push_back({i, j});
     }
-    edges->push_back({0, numVertices - 1});
     return edges;
 }
 
 /// Returns completeGraph edge-set on [numVertices] vertices.
-vector<Edge>* completeGraph(int numVertices) {
+vector<Edge>* completeGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
     for (int i = 0; i < numVertices; ++i) {
         for (int j = i + 1; j < numVertices; ++j) {
@@ -107,7 +155,7 @@ void removeVertexEdges(vector<Edge>* edges, int vertex) {
                 edges->end());
 }
 
-/// Computes the union of two graphs over the same vertex set
+/// Computes the union of two graphs over the same vertex set [n-1]={0,...,n-1}
 Graph graphUnion(const Graph& g1, const Graph& g2) {
     int n = num_vertices(g1);
     Graph G(n);
