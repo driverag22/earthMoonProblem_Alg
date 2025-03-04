@@ -15,6 +15,13 @@ using namespace std;
 /// Global var
 extern int maxEdges;
 
+/// Returns the complement of the given key.
+string complementKey(const string& key);
+
+/// Returns the canonical key (the lexicographically smallest 
+/// one of key and its complement)
+string canonicalKey(const string& key);
+
 /// Preprocess edge list to order by edge difficulty.
 void preprocessEdges(vector<Edge>* edges, int n);
 
