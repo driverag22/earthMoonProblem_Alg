@@ -7,25 +7,32 @@ def read_partitions(file_path):
     with open(file_path, "r") as f:
         lines = f.readlines()
 
-    partition1, partition2 = [], []
+    partition1, partition2, partition3 = [], [], []
     current_partition = partition1
 
     for line in lines:
         line = line.strip()
         if not line:  # empty line is switch to second partition
-            current_partition = partition2
+            if current_partition is partition1:
+                current_partition = partition2
+            elif current_partition is partition2:
+                current_partition = partition3
             continue
         u, v = map(int, line.split())
         current_partition.append((u+1, v+1))
 
-    return partition1, partition2
+    return partition1, partition2, partition3
 
-def draw_graphs(partition1, partition2):
-    """Draws both partitions side by side."""
+def draw_graphs(partition1, partition2, partition3):
+    """Draws the three partitions side by side."""
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
-    titles = ["Partition 1 - Plane Drawing", "Partition 2 - Plane Drawing"]
+    titles = [
+        f"Partition 1 - {len(partition1)} Edges", 
+        f"Partition 2 - {len(partition2)} Edges", 
+        f"Partition 3 - {len(partition3)} Edges"
+    ]
 
-    for i, (edges, ax) in enumerate(zip([partition1, partition2], axes)):
+    for i, (edges, ax) in enumerate(zip([partition1, partition2, partition3], axes)):
         G = nx.Graph()
         G.add_edges_from(edges)
 
@@ -48,8 +55,7 @@ if __name__ == "__main__":
     else:
         file_path = "data/partitions.txt"
 
-    partition1, partition2 = read_partitions(file_path)
+    partition1, partition2, partition3 = read_partitions(file_path)
 
-    if partition1 and partition2:
-        draw_graphs(partition1, partition2)
-        # draw_graph(partition2, "Partition 2 - Plane Drawing")
+    if partition1 and partition2 and partition3:
+        draw_graphs(partition1, partition2, partition3)
