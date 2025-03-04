@@ -2,16 +2,11 @@
 
 int main() {
     // length of cycle/path, size of complete graphs
-    int n1 = 9, n2 = 5;
+    int n1 = 3, n2 = 4;
     int n = n1 * n2;
     maxEdges = 3 * n - 6;
     
     auto* edges = strongProduct(pathGraph(n1), n1, completeGraph(n2), n2);
-    removeVertexEdges(edges, 0);
-    removeVertexEdges(edges, 10);
-    removeVertexEdges(edges, 20);
-    removeVertexEdges(edges, 30);
-    removeVertexEdges(edges, 40);
     // check edge bound before starting
     if ((edges->size()) > (size_t)2*maxEdges) {
         cout << "Graph cannot be biplanar, 6n-12 = " 
