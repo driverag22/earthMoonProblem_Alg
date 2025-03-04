@@ -107,6 +107,28 @@ void removeVertexEdges(vector<Edge>* edges, int vertex) {
                 edges->end());
 }
 
+/// Computes the union of two graphs over the same vertex set
+Graph graphUnion(const Graph& g1, const Graph& g2) {
+    int n = num_vertices(g1);
+    Graph G(n);
+
+    // Copy edges from g1
+    for (auto e : make_iterator_range(edges(g1))) {
+        int s = source(e, g1);
+        int t = target(e, g1);
+        add_edge(s, t, G);
+    }
+
+    // Copy edges from g2
+    for (auto e : make_iterator_range(edges(g2))) {
+        int s = source(e, g2);
+        int t = target(e, g2);
+        add_edge(s, t, G);
+    }
+
+    return G;
+}
+
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2) {
     // create adjacency matrices for G1 and G2 

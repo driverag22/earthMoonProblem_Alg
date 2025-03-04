@@ -40,6 +40,10 @@ vector<Edge>* completeGraph(int numVertices);
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
 void removeVertexEdges(vector<Edge>* edges, int vertex);
+
+/// Computes the union of two graphs over the same vertex set
+Graph graphUnion(const Graph& g1, const Graph& g2);
+
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, 
                             const vector<Edge>* graph2, int n2);
