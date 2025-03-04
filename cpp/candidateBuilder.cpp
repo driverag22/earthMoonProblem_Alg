@@ -45,3 +45,40 @@ Graph buildMaximalPlanarGraph(int n) {
 
     return G;
 }
+
+/// Function that computes for i=numVertLow, ...,numVertHigh (numVertLow \leq numAttempts)
+/// biplanar graphs on i vertices, and checks if they have chromatic number \geq 9 and/or \geq 10.
+/// It performs numAttempts attempts per i.
+/// If it finds such a graph, the graph and the two partitions are saved at:
+///    - `data/candidates{x}/graph_{i}_{n}.txt`
+/// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
+/// the graph.
+void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
+    for (int n = numVertLow; n <= numVertHigh; n++) {
+        cout << n << endl;
+        cout << endl;
+        for (int i = 0; i < numAttempts; i++) {
+            // build max planar graphs on n vertices,
+            // take their graph union
+            Graph g1 = buildMaximalPlanarGraph(n);
+            Graph g2 = buildMaximalPlanarGraph(n);
+            Graph g = graphUnion(g1, g2);
+
+            // save graph if chromatic number \geq 9 or 10
+            if (chromaticNumberAtLeast(g, 9)) {
+                outputGraph(g, "candidates9/graph_" + to_string(i) + "_" + to_string(n));
+                outputPartitions(g1, g2, "candidates9/partition_" + to_string(i) + "_" + to_string(n));
+                cout << "-------------------------------------------------" << endl;
+                cout << "Graph " << i << " is a candidate for 9!" << endl;
+                cout << "-------------------------------------------------" << endl;
+            }
+            if (chromaticNumberAtLeast(g, 10)) {
+                outputGraph(g, "candidates10/graph_" + to_string(i) + "_" + to_string(n));
+                outputPartitions(g1, g2, "candidates10/partition_" + to_string(i) + "_" + to_string(n));
+                cout << "-------------------------------------------------" << endl;
+                cout << "Graph " << i << " is a candidate for 10!" << endl;
+                cout << "-------------------------------------------------" << endl;
+            }
+        }
+    }
+}
