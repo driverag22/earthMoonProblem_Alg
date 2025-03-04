@@ -6,7 +6,7 @@ bool isPlanar(Graph& g) {
 }
 
 /// Helper function to output graph.
-void outputGraph(Graph& g, string filename = "candidate") {
+void outputGraph(Graph& g, string filename) {
     ofstream file("data/" + filename + ".txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;
@@ -20,7 +20,7 @@ void outputGraph(Graph& g, string filename = "candidate") {
 }
 
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2, string filename = "partitions") {
+void outputPartitions(Graph& g1, Graph& g2, string filename) {
     ofstream file("data/" + filename + ".txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;

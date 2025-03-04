@@ -18,10 +18,10 @@ using Edge = pair<int, int>;
 bool isPlanar(Graph& g);
 
 /// Helper function to output graph.
-void outputGraph(Graph& g, string filename);
+void outputGraph(Graph& g, string filename = "candidate");
 
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2, string filename);
+void outputPartitions(Graph& g1, Graph& g2, string filename = "partitions");
 
 /// Prints edges of a given graph (for debugging purposes).
 void printGraph(Graph& g);
