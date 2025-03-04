@@ -29,6 +29,44 @@ void printEdges(const vector<Edge>& edges) {
     }
 }
 
+// Recursively determines if g can be colored with maxColor colors
+bool canColor(const Graph& g, int maxColors, vector<int>& colors, int index) {
+    int n = num_vertices(g);
+    if (index == n)
+        return true;
+
+    // try all colors from 0 to maxColors-1 for vertex index,
+    // starting with the least used
+    /* for (const auto& [c, cnt] : available) { */
+    for (int c = 0; c < maxColors; c++) {
+        bool conflict = false;
+        // check for conflicts w/all neighbors
+        for (auto nbr_it = adjacent_vertices(index, g); nbr_it.first != nbr_it.second; ++nbr_it.first) {
+            int neighbor = *nbr_it.first;
+            if (colors[neighbor] == c) {
+                conflict = true;
+                break;
+            }
+        }
+        if (!conflict) {
+            colors[index] = c;
+            if (canColor(g, maxColors, colors, index + 1))
+                return true;
+            colors[index] = -1;
+        }
+    }
+    return false;
+}
+
+/// Checks if the chromatic number of graph g is at least k.
+bool hasChromaticNumber(Graph& g, int k) {
+    int n = num_vertices(g);
+    vector<int> colors(n, -1);
+
+    // if we can color g with k-1 colors, \chi(g) < k, so we return false.
+    return !canColor(g, k-1, colors, 0);
+}
+
 ////// Graph constructors
 /// Returns path edge-set on [numVertices] vertices.
 vector<Edge>* pathGraph(int numVertices) {

@@ -23,6 +23,9 @@ void outputPartitions(Graph& g1, Graph& g2);
 /// Prints edges of a given graph (for debugging purposes).
 void printEdges(const vector<Edge>& edges);
 
+/// Checks if the chromatic number of graph g is at least k.
+bool hasChromaticNumber(Graph& g, int k);
+
 ////// Graph constructors
 /// Returns path edge-set on [numVertices] vertices.
 vector<Edge>* pathGraph(int numVertices);
