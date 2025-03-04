@@ -13,7 +13,7 @@ PYTHON_DIR = python
 TARGET = $(BIN_DIR)/program
 
 # Source and object files
-SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/biplanarTester.cpp
+SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/triplanarTester.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule: Compile everything

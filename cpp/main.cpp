@@ -6,7 +6,7 @@ int main() {
     int n = n1 * n2;
     maxEdges = 3 * n - 6;
     
-    auto* edges = strongProduct(cycleGraph(n1), n1, completeGraph(n2), n2);
+    auto* edges = strongProduct(pathGraph(n1), n1, completeGraph(n2), n2);
     // K_6: (0-9) -> (0-5)
     removeVertexEdges(edges, 6);
     removeVertexEdges(edges, 7);
