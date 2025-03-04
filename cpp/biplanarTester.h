@@ -19,6 +19,6 @@ extern int maxEdges;
 void preprocessEdges(vector<Edge>* edges, int n);
 
 /// Back-tracking recursive implementation of biplanarity checker.
-bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2);
+bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2, string stateKey);
 
 #endif // BIPLANARTESTER_H
