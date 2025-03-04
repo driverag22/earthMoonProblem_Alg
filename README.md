@@ -8,6 +8,8 @@ The implementation uses backtracking to determine if a given graph is biplanar.
 ├── cpp/
 │   ├── biplanarTester.h
 │   ├── biplanarTester.cpp
+│   ├── helperFunctions.h
+│   ├── helperFunctions.cpp
 │   └── main.cpp
 ├── data/
 ├── python/
@@ -20,8 +22,9 @@ The implementation uses backtracking to determine if a given graph is biplanar.
 
 ### cpp
 The `cpp` code has the actual backtracking algorithm.
- - `biplanarTester.h` is simply the header file, it contains function prototypes and datastructures.
- - `biplanarTester.cpp` has the implementation, including functions to construct graphs, and the backtracking recursive code.
+ - `helperFunctions.cpp` includes functions to construct graphs, test planarity, and some other helpful things.
+ - `biplanarTester.cpp` has the implementation of the backtracking recursive code.
+ - `helperFunctions.h` and `biplanarTester.h` are simply the header file, they contain function prototypes and datastructures.
  - `main.cpp` is simply where the code is run from. Here you choose what graph to test biplanarity for.
 
 ### python
@@ -46,9 +49,8 @@ make clean
 make 
 make run
 ```
-The graph you want to check biplanarity of can be described in `cpp/main.cpp`, check `biplanarityTester.h` 
-to see the different graphs that can be used (path, cycle and complete) and operations 
-that can be applied on them (removeVertex, strongProduct).
+The graph you want to check biplanarity of can be described in `cpp/main.cpp`, check `helperFunctions.h` 
+to see the different graphs that can be used (path, cycle and complete) and operations that can be applied on them (removeVertex, strongProduct).
 
 You can also manually define the graph.
 
