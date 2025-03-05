@@ -1,9 +1,11 @@
 # Earth-Moon problem Algorithms
 Algorithms for work on the earth-moon problem.
 Current two different algorithms (sharing helper functions):
+
  - biplanarTester: backtracking algorithm to determine if a given graph is biplanar.
  - candidateBuilder: brute-force algorithm that searches for thickness-2 graphs of a chosen 
  chromatic number.
+
 Both inherit functions form the module helperFunctions.
 
 ## Directory structure
