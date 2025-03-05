@@ -56,11 +56,17 @@ vector<Edge>* completeGraphEdge(int numVertices);
 /// Removes all edges connected to a specific vertex.
 void removeVertexEdges(vector<Edge>* edges, int vertex);
 
-/// Computes the union of two graphs over the same vertex set [n-1]={0,...,n-1}
+/// Returns the complement of the given graph
+Graph graphComplement(const Graph& g);
+
+/// Returns the union of two graphs over the same vertex set [n-1]={0,...,n-1}
 Graph graphUnion(const Graph& g1, const Graph& g2);
 
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, 
                             const vector<Edge>* graph2, int n2);
+
+/// Prints progress bar.
+void printProgressBar(int progress, int total, string message = "");
 
 #endif // HELPERFUNCTIONS_H

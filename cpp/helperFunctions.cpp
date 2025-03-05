@@ -155,7 +155,19 @@ void removeVertexEdges(vector<Edge>* edges, int vertex) {
                 edges->end());
 }
 
-/// Computes the union of two graphs over the same vertex set [n-1]={0,...,n-1}
+/// Returns the complement of the given graph
+Graph graphComplement(const Graph& g) {
+    int n = num_vertices(g);
+    Graph G = completeGraph(n);
+
+    for (auto e : make_iterator_range(edges(g))) {
+        remove_edge(source(e,g), target(e,g), G);
+    }
+
+    return G;
+}
+
+/// Returns the union of two graphs over the same vertex set [n-1]={0,...,n-1}
 Graph graphUnion(const Graph& g1, const Graph& g2) {
     int n = num_vertices(g1);
     Graph G(n);
@@ -225,3 +237,18 @@ vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edg
 }
 //////
 
+/// Prints progress bar.
+void printProgressBar(int progress, int total, string message) {
+    float percentage = (float)progress / total;
+    float pos = 50.0 * percentage; //50 = width
+
+    cout << "\033[1A\033[2K\r" << message << endl; // Move up and clear line
+    cout << "\033[2K\r["; // clear line
+    for (int i = 0; i < 50; ++i) {
+        if (i < pos) cout << "=";
+        else if (i == pos) cout << ">";
+        else cout << " ";
+    }
+    cout << "] " << int(percentage * 100.0) << "%";
+    cout.flush();
+}
