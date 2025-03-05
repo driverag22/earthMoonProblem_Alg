@@ -1,5 +1,13 @@
 #include "helperFunctions.h"
 
+/// Returns graph corresponding to given edge list.
+Graph constructGraph(vector<Edge>& edges, int numVerices) {
+    Graph G(numVerices);
+    for (const auto& e : edges)
+        add_edge(e.first, e.second, G);
+    return G;
+}
+
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g) {
     return boyer_myrvold_planarity_test(g);
@@ -16,7 +24,7 @@ void outputGraph(Graph& g, string filename) {
     for (const auto& e : make_iterator_range(edges(g))) file << source(e, g) << " " << target(e, g) << "\n";
 
     file.close();
-    cout << "Graph saved to " << filename << ".txt" << endl;
+    /* cout << "Graph saved to " << filename << ".txt" << endl; */
 }
 
 /// Helper function to output edge partitions.
@@ -47,20 +55,19 @@ void printEdges(const vector<Edge>& edges) {
     }
 }
 
-/// Recursively determines if g can be colored with maxColor colors
-bool canColor(const Graph& g, int maxColors, vector<int>& colors, int index) {
+////// Graph computations
+/// Recursively determines if g can be colored with nColors colors
+bool canColor(const Graph& g, int nColors, vector<int>& colors, int index) {
     int n = num_vertices(g);
     if (index == n)
         return true;
 
     // try all colors from 0 to maxColors-1 for vertex index,
     // starting with the least used
-    /* for (const auto& [c, cnt] : available) { */
-    for (int c = 0; c < maxColors; c++) {
+    for (int c = 0; c < nColors; c++) {
         bool conflict = false;
         // check for conflicts w/all neighbors
-        for (auto nbr_it = adjacent_vertices(index, g); nbr_it.first != nbr_it.second; ++nbr_it.first) {
-            int neighbor = *nbr_it.first;
+        for (const auto& neighbor : make_iterator_range(adjacent_vertices(index, g))) {
             if (colors[neighbor] == c) {
                 conflict = true;
                 break;
@@ -68,15 +75,15 @@ bool canColor(const Graph& g, int maxColors, vector<int>& colors, int index) {
         }
         if (!conflict) {
             colors[index] = c;
-            if (canColor(g, maxColors, colors, index + 1))
-                return true;
+            if (canColor(g, nColors, colors, index + 1)) return true;
             colors[index] = -1;
         }
     }
     return false;
 }
 
-/// Checks if the chromatic number of graph g is at least k.
+/// Returns if the chromatic number of graph g is at least k.
+///   - returns [\chi(G) \geq k]
 bool chromaticNumberAtLeast(Graph& g, int k) {
     int n = num_vertices(g);
     vector<int> colors(n, -1);
@@ -84,6 +91,37 @@ bool chromaticNumberAtLeast(Graph& g, int k) {
     // if we can color g with k-1 colors, \chi(g) < k, so we return false.
     return !canColor(g, k-1, colors, 0);
 }
+
+/// Determines if there is an independent set in [g] of size [k]
+/// containing the vertices in independentSet (backtracking).
+bool findIndependentSet(Graph& g, vector<int> independentSet, int index, int k) {
+    // if set is full-size, return true
+    if (independentSet.size() == (size_t)k) return true;
+    // if not, and no more vertices left, return false
+    else if ((size_t)index >= num_vertices(g)) return false;
+
+    // try excluding current vertex
+    if (findIndependentSet(g, independentSet, index + 1, k)) return true;
+
+    // check if we can add it
+    for (int v : independentSet) {
+        if (edge(index, v, g).second) return false;
+    }
+    // try adding it if we can
+    independentSet.push_back(index);
+    if (findIndependentSet(g, independentSet, index + 1, k)) return true;
+    independentSet.pop_back();
+
+    return false;
+}
+
+/// Checks if the independence number of [g] is at most [k].
+///   - returns [\alpha(G) \leq k] == ![\alpha(G) \geq k+1]
+bool independenceNumberAtMost(Graph& g, int k) {
+    vector<int> indeptSet;
+    return !findIndependentSet(g, indeptSet, 0, k+1);
+}
+//////
 
 ////// Graph constructors
 /// Returns path graph on [numVertices] vertices.
@@ -128,7 +166,7 @@ vector<Edge>* pathGraphEdge(int numVertices) {
 /// Returns cycle edge-set on [numVertices] vertices.
 vector<Edge>* cycleGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
-    for (int i = 0; i < numVertices - 1; ++i) {
+    for (int i = 0; i < numVertices; ++i) {
         int j = (i + 1) % numVertices;
         edges->push_back({i, j});
     }
@@ -190,7 +228,8 @@ Graph graphUnion(const Graph& g1, const Graph& g2) {
 }
 
 /// Returns the strong product of two graphs.
-vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, const vector<Edge>* graph2, int n2) {
+vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1, 
+                                const vector<Edge>* graph2, int n2) {
     // create adjacency matrices for G1 and G2 
     // to quickly check if (u,v) is an edge of either
     vector<vector<bool>> adj1(n1, vector<bool>(n1, false));

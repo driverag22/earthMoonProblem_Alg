@@ -14,6 +14,9 @@ using namespace std;
 using Graph = adjacency_list<vecS, vecS, undirectedS>;
 using Edge = pair<int, int>;
 
+/// Returns graph corresponding to given edge list.
+Graph constructGraph(vector<Edge>& edges, int numVertices);
+
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g);
 
@@ -29,8 +32,20 @@ void printGraph(Graph& g);
 /// Prints edges of a given edge list (for debugging purposes).
 void printEdges(const vector<Edge>& edges);
 
-/// Checks if the chromatic number of graph g is at least k.
+////// Graph computations
+/// Recursively determines if [g] can be colored with [nColors] colors
+bool canColor(const Graph& g, int nColors, vector<int>& colors, int index);
+
+/// Checks if the chromatic number of graph [g] is at least [k].
 bool chromaticNumberAtLeast(Graph& g, int k);
+
+/// Determines if there is an independent set in [g] of size [k]
+/// containing the vertices in independentSet (backtracking).
+bool findIndependentSet(Graph& g, vector<int> independentSet, int index, int k);
+
+/// Checks if the independence number of [g] is at most [k].
+bool independenceNumberAtMost(Graph& g, int k);
+////// 
 
 ////// Graph constructors
 /// Returns path Graph on [numVertices] vertices.
@@ -63,8 +78,8 @@ Graph graphComplement(const Graph& g);
 Graph graphUnion(const Graph& g1, const Graph& g2);
 
 /// Returns the strong product of two graphs.
-vector<Edge>* strongProduct(const vector<Edge>* graph1, int n1, 
-                            const vector<Edge>* graph2, int n2);
+vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1, 
+                                const vector<Edge>* graph2, int n2);
 
 /// Prints progress bar.
 void printProgressBar(int progress, int total, string message = "");

@@ -64,25 +64,23 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
             Graph g1 = buildMaximalPlanarGraph(n);
             Graph g2 = buildMaximalPlanarGraph(n);
             Graph g = graphUnion(g1, g2);
+            int n = num_vertices(g);
 
-            // save graph if chromatic number \geq 8,9 or 10
-            if (chromaticNumberAtLeast(g, 8)) {
-                string s = "8_" + to_string(i) + "_" + to_string(n);
-                outputGraph(g, "candidates/graph_" + s);
-                outputPartitions(g1, g2, "candidates/partition_" + s);
-                cout << s << endl;
-            }
-            if (chromaticNumberAtLeast(g, 9)) {
-                string s = "9_" + to_string(i) + "_" + to_string(n);
-                outputGraph(g, "candidates/graph_" + s);
-                outputPartitions(g1, g2, "candidates/partition_" + s);
-                cout << s << endl;
-            }
-            if (chromaticNumberAtLeast(g, 10)) {
-                string s = "10_" + to_string(i) + "_" + to_string(n);
-                outputGraph(g, "candidates/graph_" + s);
-                outputPartitions(g1, g2, "candidates/partition_" + s);
-                cout << s << endl;
+            // save graph if chromatic number \geq 10 or 9
+            // we use: 
+            //     \chi \geq n/(\alpha) \geq 10,9 
+            //                <=> 
+            //          \alpha \leq n/10, n/9
+            // so we want alpha \leq ceil(n/10), ceil(n/9)
+            // We use cpp trick: ceil(n/x) = (n+x-1)/x
+            if (independenceNumberAtMost(g, (n+9)/10)) {
+                string s = to_string(i) + "_" + to_string(n);
+                outputGraph(g, "candidates/candidates10/graph_" + s);
+                outputPartitions(g1, g2, "candidates/candidates10/partition_" + s);
+            } else if (independenceNumberAtMost(g, (n+8)/9)) {
+                string s = to_string(i) + "_" + to_string(n);
+                outputGraph(g, "candidates/candidates9/graph_" + s);
+                outputPartitions(g1, g2, "candidates/candidates9/partition_" + s);
             }
         }
     }
