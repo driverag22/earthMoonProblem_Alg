@@ -47,10 +47,12 @@ Graph buildMaximalPlanarGraph(int n) {
 }
 
 /// Function that computes for i=numVertLow, ...,numVertHigh (numVertLow \leq numAttempts)
-/// biplanar graphs on i vertices, and checks if they have chromatic number \geq 9 and/or \geq 10.
+/// biplanar graphs on i vertices, and determines if they are candidates for high chromatic
+/// number (\geq 9 or \geq 10).
 /// It performs numAttempts attempts per i.
+///
 /// If it finds such a graph, the graph and the two partitions are saved at:
-///    - `data/candidates{x}/graph_{i}_{n}.txt`
+///    - `data/candidates/chr{x}/graph_{i}_{n}.txt`
 /// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
 /// the graph.
 void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
@@ -71,17 +73,22 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
             //     \chi \geq n/(\alpha) \geq 10,9 
             //                <=> 
             //          \alpha \leq n/10, n/9
-            // so we want alpha \leq ceil(n/10), ceil(n/9)
-            // We use cpp trick: ceil(n/x) = (n+x-1)/x
-            if (independenceNumberAtMost(g, (n+9)/10)) {
-                string s = to_string(i) + "_" + to_string(n);
-                outputGraph(g, "candidates/candidates10/graph_" + s);
-                outputPartitions(g1, g2, "candidates/candidates10/partition_" + s);
-            } else if (independenceNumberAtMost(g, (n+8)/9)) {
-                string s = to_string(i) + "_" + to_string(n);
-                outputGraph(g, "candidates/candidates9/graph_" + s);
-                outputPartitions(g1, g2, "candidates/candidates9/partition_" + s);
+            if (independenceNumberAtMost(g, n/10)) {
+                saveCandidateGraph(g, g1, g2, i, n, 10);
+            } else if (independenceNumberAtMost(g, n/9)) {
+                saveCandidateGraph(g, g1, g2, i, n, 9);
             }
+            /* if (chromaticNumberAtLeast(g, 10)) { */
+            /*     saveCandidateGraph(g, g1, g2, i, n, 10); */
+            /* } else if (chromaticNumberAtLeast(g, 9)) { */
+            /*     saveCandidateGraph(g, g1, g2, i, n, 9); */
+            /* } */
         }
     }
+}
+
+void saveCandidateGraph(Graph g, Graph g1, Graph g2, int i, int n, int c) {
+    string s = "chr" + to_string(c) + "/graph_" + to_string(i) + "_" + to_string(n);
+    outputGraph(g, "candidates/" + s);
+    outputPartitions(g1, g2, "candidates/" + s);
 }

@@ -24,7 +24,6 @@ void outputGraph(Graph& g, string filename) {
     for (const auto& e : make_iterator_range(edges(g))) file << source(e, g) << " " << target(e, g) << "\n";
 
     file.close();
-    /* cout << "Graph saved to " << filename << ".txt" << endl; */
 }
 
 /// Helper function to output edge partitions.
@@ -40,7 +39,6 @@ void outputPartitions(Graph& g1, Graph& g2, string filename) {
     for (const auto& e : make_iterator_range(edges(g2))) file << source(e, g2) << " " << target(e, g2) << "\n";
 
     file.close();
-    cout << "Partitions saved to " << filename << ".txt" << endl;
 }
 
 /// Helper function to output edge partitions.

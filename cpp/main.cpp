@@ -4,6 +4,6 @@
 int main() {
     cout << endl;
     cout << endl;
-    computeCandidateGraphs(10, 20, 10000);
+    computeCandidateGraphs(100, 100, 10);
     return 0;
 }

@@ -18,13 +18,18 @@ bool canAddEdgePlanar(Graph& G, int u, int v);
 Graph buildMaximalPlanarGraph(int n);
 
 /// Function that computes for i=numVertLow, ...,numVertHigh (numVertLow \leq numAttempts)
-/// biplanar graphs on i vertices, and checks if they have chromatic number \geq 9 and/or \geq 10.
+/// biplanar graphs on i vertices, and determines if they are candidates for high chromatic
+/// number (\geq 9 or \geq 10).
 /// It performs numAttempts attempts per i.
+///
 /// If it finds such a graph, the graph and the two partitions are saved at:
-///    - `data/candidates{x}/graph_{i}_{n}.txt`
+///    - `data/candidates/chr{x}/graph_{i}_{n}.txt`
 /// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
 /// the graph.
 void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts);
+
+/// Saves candidate graph [g] and partitions [g1],[g2] at `data/candidates/chr{x}/graph_{i}_{n}.txt`
+void saveCandidateGraph(Graph g, Graph g1, Graph g2, int i, int n, int c);
 
 #endif // GRAPHBUILDER_H
 
