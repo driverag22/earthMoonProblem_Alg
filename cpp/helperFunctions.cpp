@@ -54,11 +54,17 @@ void printEdges(const vector<Edge>& edges) {
 }
 
 ////// Graph computations
-/// Recursively determines if g can be colored with nColors colors
-bool canColor(const Graph& g, int nColors, vector<int>& colors, int index) {
+/// Recursively determines if [g] can be colored with [nColors] colors.
+/// Returns true if finding a coloring with [k-1] colors takes over 
+/// [time_limit_ms] ms and [timed] is true.
+bool canColor(const Graph& g, int nColors, vector<int>& colors, int index, bool timed,
+              const chrono::steady_clock::time_point& start_time, chrono::milliseconds time_limit) {
     int n = num_vertices(g);
     if (index == n)
         return true;
+
+    if (timed && chrono::steady_clock::now() - start_time > time_limit)
+        return false; 
 
     // try all colors from 0 to maxColors-1 for vertex index,
     // starting with the least used
@@ -73,21 +79,25 @@ bool canColor(const Graph& g, int nColors, vector<int>& colors, int index) {
         }
         if (!conflict) {
             colors[index] = c;
-            if (canColor(g, nColors, colors, index + 1)) return true;
+            if (canColor(g, nColors, colors, index + 1, timed, start_time, time_limit)) return true;
             colors[index] = -1;
         }
     }
     return false;
 }
 
-/// Returns if the chromatic number of graph g is at least k.
-///   - returns [\chi(G) \geq k]
-bool chromaticNumberAtLeast(Graph& g, int k) {
+/// Returns if the chromatic number of graph [g] is at least [k],
+/// or if finding a coloring with [k-1] colors takes over [time_limit_s] s 
+/// and [timed] is true.
+bool chromaticNumberAtLeast(Graph& g, int k, bool timed, int time_limit_s) {
     int n = num_vertices(g);
     vector<int> colors(n, -1);
 
+    auto start_time = chrono::steady_clock::now();
+    chrono::milliseconds time_limit(1000 * time_limit_s);
+
     // if we can color g with k-1 colors, \chi(g) < k, so we return false.
-    return !canColor(g, k-1, colors, 0);
+    return !canColor(g, k-1, colors, 0, timed, start_time, time_limit);
 }
 
 /// Determines if there is an independent set in [g] of size [k]
@@ -279,13 +289,13 @@ void printProgressBar(int progress, int total, string message) {
     float percentage = (float)progress / total;
     float pos = 50.0 * percentage; //50 = width
 
-    cout << "\033[1A\033[2K\r" << message << endl; // Move up and clear line
+    cout << "\033[2A\033[2K\r" << message << endl; // Move up and clear line
     cout << "\033[2K\r["; // clear line
     for (int i = 0; i < 50; ++i) {
         if (i < pos) cout << "=";
         else if (i == pos) cout << ">";
         else cout << " ";
     }
-    cout << "] " << int(percentage * 100.0) << "%";
+    cout << "] " << int(percentage * 100.0) << "%" << endl;
     cout.flush();
 }

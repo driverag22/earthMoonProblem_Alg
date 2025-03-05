@@ -22,14 +22,19 @@ Graph buildMaximalPlanarGraph(int n);
 /// number (\geq 9 or \geq 10).
 /// It performs numAttempts attempts per i.
 ///
+/// The way to determine if graphs are candidates depends on [ind] and [chr].
+///   [ind] approach checks if independence number is high enough to lowerbound 
+///   chromatic number by 9,10
+///   [chr] approach checks if chromatic number \geq 9,10 w.h.p.
+///
 /// If it finds such a graph, the graph and the two partitions are saved at:
 ///    - `data/candidates/chr{x}/graph_{i}_{n}.txt`
 /// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
 /// the graph.
-void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts);
+void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bool ind, bool chr);
 
-/// Saves candidate graph [g] and partitions [g1],[g2] at `data/candidates/chr{x}/graph_{i}_{n}.txt`
-void saveCandidateGraph(Graph g, Graph g1, Graph g2, int i, int n, int c);
+/// Saves candidate graph [g] and partitions [g1],[g2] at `data/candidates/{txt}{x}/graph_{i}_{n}.txt`
+void saveCandidateGraph(Graph g, Graph g1, Graph g2, string txt, int i, int n, int c);
 
 #endif // GRAPHBUILDER_H
 

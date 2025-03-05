@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 
@@ -33,11 +34,15 @@ void printGraph(Graph& g);
 void printEdges(const vector<Edge>& edges);
 
 ////// Graph computations
-/// Recursively determines if [g] can be colored with [nColors] colors
-bool canColor(const Graph& g, int nColors, vector<int>& colors, int index);
+/// Recursively determines if [g] can be colored with [nColors] colors.
+/// Returns true if time goes over [time_limit].
+bool canColor(const Graph& g, int nColors, vector<int>& colors, int index,
+              bool timed, const chrono::steady_clock::time_point& start_time, chrono::milliseconds time_limit);
 
-/// Checks if the chromatic number of graph [g] is at least [k].
-bool chromaticNumberAtLeast(Graph& g, int k);
+/// Returns if the chromatic number of graph [g] is at least [k],
+/// or if finding a coloring with [k-1] colors takes over [time_limit_s] s 
+/// and [timed] is true.
+bool chromaticNumberAtLeast(Graph& g, int k, bool time, int time_limit);
 
 /// Determines if there is an independent set in [g] of size [k]
 /// containing the vertices in independentSet (backtracking).

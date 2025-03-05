@@ -46,20 +46,25 @@ Graph buildMaximalPlanarGraph(int n) {
     return G;
 }
 
-/// Function that computes for i=numVertLow, ...,numVertHigh (numVertLow \leq numAttempts)
+/// Function that computes for i=[numVertLow], ...,[numVertHigh] ([numVertLow] \leq [numAttempts])
 /// biplanar graphs on i vertices, and determines if they are candidates for high chromatic
 /// number (\geq 9 or \geq 10).
-/// It performs numAttempts attempts per i.
+/// It performs [numAttempts] attempts per i.
+///
+/// The way to determine if graphs are candidates depends on [ind] and [chr].
+///   [ind] approach checks if independence number is high enough to lowerbound 
+///   chromatic number by 9,10
+///   [chr] approach checks if chromatic number \geq 9,10 w.h.p.
 ///
 /// If it finds such a graph, the graph and the two partitions are saved at:
 ///    - `data/candidates/chr{x}/graph_{i}_{n}.txt`
 /// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
 /// the graph.
-void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
+void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bool ind, bool chr) {
     for (int n = numVertLow; n <= numVertHigh; n++) {
         for (int i = 0; i < numAttempts; i++) {
-            printProgressBar(i, numAttempts, 
-                             "Iteration i = " + to_string(i) + "/" + to_string(numAttempts) 
+            printProgressBar(i+1, numAttempts, 
+                             "Iteration i = " + to_string(i+1) + "/" + to_string(numAttempts) 
                              + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
             // build max planar graphs on n vertices,
             // take their graph union
@@ -68,27 +73,38 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts) {
             Graph g = graphUnion(g1, g2);
             int n = num_vertices(g);
 
-            // save graph if chromatic number \geq 10 or 9
+            // save graph if chromatic number 
+            // (possbly) \geq 10 or 9
             // we use: 
             //     \chi \geq n/(\alpha) \geq 10,9 
             //                <=> 
             //          \alpha \leq n/10, n/9
-            if (independenceNumberAtMost(g, n/10)) {
-                saveCandidateGraph(g, g1, g2, i, n, 10);
-            } else if (independenceNumberAtMost(g, n/9)) {
-                saveCandidateGraph(g, g1, g2, i, n, 9);
+            //    OR
+            //     \chi \geq 10,9 or over 1000 seconds 
+            //     pass while coloring with 9,8 colors.
+            if (ind) {
+                if (independenceNumberAtMost(g, n/10)) {
+                    saveCandidateGraph(g, g1, g2, "ind", i, n, 10);
+                } else if (independenceNumberAtMost(g, n/9)) {
+                    saveCandidateGraph(g, g1, g2, "ind", i, n, 9);
+                }
             }
-            /* if (chromaticNumberAtLeast(g, 10)) { */
-            /*     saveCandidateGraph(g, g1, g2, i, n, 10); */
-            /* } else if (chromaticNumberAtLeast(g, 9)) { */
-            /*     saveCandidateGraph(g, g1, g2, i, n, 9); */
-            /* } */
+            if (chr) {
+                // wait 1000s ~ 16.6 minutes max.
+                if (chromaticNumberAtLeast(g, 10, true, 1000)) {
+                    saveCandidateGraph(g, g1, g2, "chr", i, n, 10);
+                } else if (chromaticNumberAtLeast(g, 9, true, 1000)) {
+                    saveCandidateGraph(g, g1, g2, "chr", i, n, 9);
+                }
+            }
         }
+        cout << endl << endl << endl;
     }
 }
 
-void saveCandidateGraph(Graph g, Graph g1, Graph g2, int i, int n, int c) {
-    string s = "chr" + to_string(c) + "/graph_" + to_string(i) + "_" + to_string(n);
+/// Saves candidate graph [g] and partitions [g1],[g2] at `data/candidates/{txt}{x}/graph_{i}_{n}.txt`
+void saveCandidateGraph(Graph g, Graph g1, Graph g2, string txt, int i, int n, int c) {
+    string s = txt + to_string(c) + "/graph_" + to_string(i) + "_" + to_string(n);
     outputGraph(g, "candidates/" + s);
     outputPartitions(g1, g2, "candidates/" + s);
 }

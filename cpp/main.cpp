@@ -4,6 +4,7 @@
 int main() {
     cout << endl;
     cout << endl;
-    computeCandidateGraphs(100, 100, 10);
+    // (numVertLow, numVertHigh, numAttempts, bool independenceNumbe, bool chromaticNumber)
+    computeCandidateGraphs(20, 100, 1000, true, false);
     return 0;
 }
