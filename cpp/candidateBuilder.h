@@ -14,8 +14,10 @@ using namespace std;
 /// Determines if edge (u,v) can be added while maintaining planarity.
 bool canAddEdgePlanar(Graph& G, int u, int v);
 
-/// Function that returns a *random* or *constructed* maximal planar graph on n vertices.
-Graph buildMaximalPlanarGraph(int n);
+/// Function that returns a *random* or *constructed* maximal planar graph on [n] vertices.
+/// If [avoidGraph] is passed, it will avoid its edges to construct a maximal planar graph 
+/// edge-disjoint from it.
+Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph = nullptr);
 
 /// Function that computes for i=numVertLow, ...,numVertHigh (numVertLow \leq numAttempts)
 /// biplanar graphs on i vertices, and determines if they are candidates for high chromatic

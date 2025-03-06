@@ -12,17 +12,28 @@ bool canAddEdgePlanar(Graph& G, int u, int v) {
 }
 
 /// Returns a *random* maximal planar graph on n vertices.
-Graph buildMaximalPlanarGraph(int n) {
+Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph) {
     // we start with a simple cycle on n vertices and add edges to it
     Graph G = cycleGraph(n);
+
+    set<Edge> edgesToAvoid;
+    if (avoidGraph) {
+        for (auto e : make_iterator_range(edges(*avoidGraph))) {
+            int u = source(e, *avoidGraph);
+            int v = target(e, *avoidGraph);
+            if (u > v) std::swap(u, v);
+            edgesToAvoid.insert({u, v});
+        }
+    }
 
     // We'll attempt all possible edges in random order, adding them if planarity holds.
     vector<pair<int,int>> allPossible;
     allPossible.reserve(n*(n-1)/2);
     for (int i = 0; i < n; ++i) {
         for (int j = i+1; j < n; ++j) {
-            // skip edges already in the cycle
-            allPossible.push_back({i, j});
+            // skip edges already in the cycle, or in the avoidGraph
+            if (!edge(i, j, G).second && (!avoidGraph || edgesToAvoid.count({i, j}) == 0))
+                allPossible.push_back({i, j});
         }
     }
 
@@ -32,14 +43,8 @@ Graph buildMaximalPlanarGraph(int n) {
 
     // Try adding each edge, keep it if the graph stays planar
     for (auto& e : allPossible) {
-        int u = e.first;
-        int v = e.second;
-        if (edge(u, v, G).second) {
-            // already in the graph
-            continue;
-        }
-        if (canAddEdgePlanar(G, u, v)) {
-            add_edge(u, v, G);
+        if (canAddEdgePlanar(G, e.first, e.second)) {
+            add_edge(e.first, e.second, G);
         }
     }
 
@@ -49,29 +54,18 @@ Graph buildMaximalPlanarGraph(int n) {
 /// Function that computes for i=[numVertLow], ...,[numVertHigh] ([numVertLow] \leq [numAttempts])
 /// biplanar graphs on i vertices, and determines if they are candidates for high chromatic
 /// number (\geq 9 or \geq 10).
-/// It performs [numAttempts] attempts per i.
-///
-/// The way to determine if graphs are candidates depends on [ind] and [chr].
-///   [ind] approach checks if independence number is high enough to lowerbound 
-///   chromatic number by 9,10
-///   [chr] approach checks if chromatic number \geq 9,10 w.h.p.
-///
-/// If it finds such a graph, the graph and the two partitions are saved at:
-///    - `data/candidates/chr{x}/graph_{i}_{n}.txt`
-/// where {x} is 9 or 10 (chromatic number), {i} current attempt, and {n} number of vertices of 
-/// the graph.
 void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bool ind, bool chr) {
     for (int n = numVertLow; n <= numVertHigh; n++) {
         for (int i = 0; i < numAttempts; i++) {
             printProgressBar(i+1, numAttempts, 
                              "Iteration i = " + to_string(i+1) + "/" + to_string(numAttempts) 
                              + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
-            // build max planar graphs on n vertices,
-            // take their graph union
+            // build max planar graphs on n vertices
             Graph g1 = buildMaximalPlanarGraph(n);
-            Graph g2 = buildMaximalPlanarGraph(n);
+            // build max planar graphs on n vertices avoiding first graph
+            Graph g2 = buildMaximalPlanarGraph(n, &g1);
+            // take their graph union
             Graph g = graphUnion(g1, g2);
-            int n = num_vertices(g);
 
             // save graph if chromatic number 
             // (possbly) \geq 10 or 9
@@ -106,5 +100,6 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
 void saveCandidateGraph(Graph g, Graph g1, Graph g2, string txt, int i, int n, int c) {
     string s = txt + to_string(c) + "/graph_" + to_string(i) + "_" + to_string(n);
     outputGraph(g, "candidates/" + s);
-    outputPartitions(g1, g2, "candidates/" + s);
+    string t = txt + to_string(c) + "/partitions_" + to_string(i) + "_" + to_string(n);
+    outputPartitions(g1, g2, "candidates/" + t);
 }
