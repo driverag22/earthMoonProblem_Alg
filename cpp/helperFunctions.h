@@ -68,13 +68,22 @@ vector<Edge>* pathGraphEdge(int numVertices);
 /// Returns cycleGraph edge-set on [numVertices] vertices.
 vector<Edge>* cycleGraphEdge(int numVertices);
 
-/// Returns completeGraph edge-set on [numVertices] vertices.
+/// Returns complete graph edge-set on [numVertices] vertices.
 vector<Edge>* completeGraphEdge(int numVertices);
+
+/// Returns bipartite graph edge-set on [numVerticesA, numVerticesB] vertices.
+vector<Edge>* bipartiteGraphEdge(int numVerticesA, int numVerticesB);
+
+/// Returns k-wheel graph edge-set on [numVertices - k, k] vertices.
+vector<Edge>* wheelGraphEdge(int numVertices, int k);
 ////// 
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
 void removeVertexEdges(vector<Edge>* edges, int vertex);
+
+/// Removes a specific edge.
+void removeEdge(vector<Edge>& edges, const Edge& target);
 
 /// Returns the complement of the given graph
 Graph graphComplement(const Graph& g);
@@ -85,6 +94,9 @@ Graph graphUnion(const Graph& g1, const Graph& g2);
 /// Returns the strong product of two graphs.
 vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1, 
                                 const vector<Edge>* graph2, int n2);
+
+/// Returns the 2-blowup of the given graph.
+vector<Edge>* blowup(const vector<Edge>* graph, int n);
 
 /// Prints progress bar.
 void printProgressBar(int progress, int total, string message = "");

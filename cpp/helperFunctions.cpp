@@ -181,7 +181,7 @@ vector<Edge>* cycleGraphEdge(int numVertices) {
     return edges;
 }
 
-/// Returns completeGraph edge-set on [numVertices] vertices.
+/// Returns complete graph edge-set on [numVertices] vertices.
 vector<Edge>* completeGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
     for (int i = 0; i < numVertices; ++i) {
@@ -191,6 +191,31 @@ vector<Edge>* completeGraphEdge(int numVertices) {
     }
     return edges;
 }
+
+/// Returns bipartite graph edge-set on [numVerticesA, numVerticesB] vertices.
+vector<Edge>* bipartiteGraphEdge(int numVerticesA, int numVerticesB) {
+    auto* edges = new vector<Edge>();
+    for (int i = 0; i < numVerticesA; ++i) {
+        for (int j = 0; j < numVerticesB; ++j) {  
+            edges->push_back({i, numVerticesA + j});
+        }
+    }
+    return edges;
+}
+
+/// Returns k-wheel graph edge-set on [numVertices - k, k] vertices.
+vector<Edge>* wheelGraphEdge(int numVertices, int k) {
+    // make cycle
+    auto* edges = cycleGraphEdge(numVertices-k);
+    // add edges from partition of k vertices
+    for (int j = numVertices - k; j < numVertices; j++) {
+        for (int i = 0; i < numVertices - k; ++i) {
+            edges->push_back({i, j});
+        }
+    }
+    return edges;
+}
+
 //////
 
 ////// Graph operations
@@ -199,6 +224,14 @@ void removeVertexEdges(vector<Edge>* edges, int vertex) {
     edges->erase(remove_if(edges->begin(), edges->end(), 
                 [vertex](const Edge& e) { return e.first == vertex || e.second == vertex; }),
                 edges->end());
+}
+
+/// Removes a specific edge.
+void removeEdge(vector<Edge>& edges, const Edge& target) {
+    edges.erase(
+        std::remove(edges.begin(), edges.end(), target),
+        edges.end()
+    );
 }
 
 /// Returns the complement of the given graph
@@ -281,6 +314,18 @@ vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1,
     }
     
     return productEdges;
+}
+
+/// Returns the 2-blowup of the given graph.
+vector<Edge>* blowup(const vector<Edge>* graph, int n) {
+    auto* edges = new vector<Edge>();
+    for (auto& e : *graph) {
+        edges->push_back({e.first, e.second});
+        edges->push_back({e.first + n, e.second + n});
+        edges->push_back({e.first + n, e.second});
+        edges->push_back({e.first, e.second + n});
+    }
+    return edges;
 }
 //////
 

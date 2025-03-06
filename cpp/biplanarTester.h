@@ -21,4 +21,7 @@ void preprocessEdges(vector<Edge>* edges, int n);
 /// Back-tracking recursive implementation of biplanarity checker.
 bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2);
 
+/// Determine if given graph is biplanar.
+void testBiplanarity(vector<Edge>* edges, int n);
+
 #endif // BIPLANARTESTER_H

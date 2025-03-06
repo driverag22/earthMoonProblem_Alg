@@ -64,3 +64,23 @@ bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
     
     return false;
 }
+
+void testBiplanarity(vector<Edge>* edges, int n) {
+    if ((edges->size()) > (size_t)2*maxEdges) {
+        cout << "Graph cannot be biplanar, 6n-12 = " 
+            << 2*maxEdges << " but number of edges is "
+            << edges->size() << endl;
+        delete edges;
+        return;
+    }
+    preprocessEdges(edges, n);
+    cout << "6n-12 = " << 2*maxEdges << " and number of edges is "
+        << edges->size() << endl;
+
+    Graph g1(n), g2(n);
+    // add first edge arbitrarily, it doesn't matter due to symmetry
+    add_edge((*edges)[0].first, (*edges)[0].second, g1);
+    if (!isBiplanar(*edges, 1, g1, g2)) {
+        cout << "Graph is not biplanar." << endl;
+    }
+}
