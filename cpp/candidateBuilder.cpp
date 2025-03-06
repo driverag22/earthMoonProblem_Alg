@@ -56,14 +56,16 @@ Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph) {
 /// number (\geq 9 or \geq 10).
 void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bool ind, bool chr) {
     for (int n = numVertLow; n <= numVertHigh; n++) {
+        printProgressBar(0, numAttempts, 
+                         "Iteration i = 0/" + to_string(numAttempts) 
+                         + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
         for (int i = 0; i < numAttempts; i++) {
-            printProgressBar(i+1, numAttempts, 
-                             "Iteration i = " + to_string(i+1) + "/" + to_string(numAttempts) 
-                             + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
             // build max planar graphs on n vertices
             Graph g1 = buildMaximalPlanarGraph(n);
             // build max planar graphs on n vertices avoiding first graph
             Graph g2 = buildMaximalPlanarGraph(n, &g1);
+            cout << num_edges(g1) << " " << num_edges(g2) << endl;
+            cout << endl << endl;
             // take their graph union
             Graph g = graphUnion(g1, g2);
 
@@ -91,6 +93,9 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
                     saveCandidateGraph(g, g1, g2, "chr", i, n, 9);
                 }
             }
+            printProgressBar(i+1, numAttempts, 
+                             "Iteration i = " + to_string(i+1) + "/" + to_string(numAttempts) 
+                             + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
         }
         cout << endl << endl << endl;
     }
@@ -98,8 +103,8 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
 
 /// Saves candidate graph [g] and partitions [g1],[g2] at `data/candidates/{txt}{x}/graph_{i}_{n}.txt`
 void saveCandidateGraph(Graph g, Graph g1, Graph g2, string txt, int i, int n, int c) {
-    string s = txt + to_string(c) + "/graph_" + to_string(i) + "_" + to_string(n);
+    string s = txt + to_string(c) + "/" + to_string(n) + "_" + to_string(i) + "_graph";
     outputGraph(g, "candidates/" + s);
-    string t = txt + to_string(c) + "/partitions_" + to_string(i) + "_" + to_string(n);
+    string t = txt + to_string(c) + "/" + to_string(n) + "_" + to_string(i) + "_partitions";
     outputPartitions(g1, g2, "candidates/" + t);
 }
