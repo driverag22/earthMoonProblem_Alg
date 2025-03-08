@@ -64,8 +64,6 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
             Graph g1 = buildMaximalPlanarGraph(n);
             // build max planar graphs on n vertices avoiding first graph
             Graph g2 = buildMaximalPlanarGraph(n, &g1);
-            cout << num_edges(g1) << " " << num_edges(g2) << endl;
-            cout << endl << endl;
             // take their graph union
             Graph g = graphUnion(g1, g2);
 
@@ -97,7 +95,6 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
                              "Iteration i = " + to_string(i+1) + "/" + to_string(numAttempts) 
                              + ", numb of vertices = " + to_string(n) + "/" + to_string(numVertHigh) + ": ");
         }
-        cout << endl << endl << endl;
     }
 }
 

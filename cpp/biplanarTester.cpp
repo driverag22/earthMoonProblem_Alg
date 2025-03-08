@@ -74,8 +74,8 @@ void testBiplanarity(vector<Edge>* edges, int n) {
         return;
     }
     preprocessEdges(edges, n);
-    cout << "6n-12 = " << 2*maxEdges << " and number of edges is "
-        << edges->size() << endl;
+    /* cout << "6n-12 = " << 2*maxEdges << " and number of edges is " */
+    /*     << edges->size() << endl; */
 
     Graph g1(n), g2(n);
     // add first edge arbitrarily, it doesn't matter due to symmetry
