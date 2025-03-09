@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = -lboost_graph  # Boost Graph Library
+LDFLAGS = -lboost_graph -lgurobi_c++ -lgurobi1201
 
 # Directories
 SRC_DIR = cpp
@@ -13,7 +13,7 @@ PYTHON_DIR = python
 TARGET = $(BIN_DIR)/program
 
 # Source and object files
-SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/helperFunctions.cpp
+SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/SATBiplanarTester.cpp $(SRC_DIR)/helperFunctions.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule: Compile everything
@@ -22,7 +22,7 @@ all: $(TARGET)
 # Compile the program
 $(TARGET): $(SRCS)
 	mkdir -p $(BIN_DIR)  # Ensure bin/ exists
-	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET) $(LDFLAGS) -I/opt/gurobi1201/linux64/include -L/opt/gurobi1201/linux64/lib
 
 # Run the compiled program
 run: all
