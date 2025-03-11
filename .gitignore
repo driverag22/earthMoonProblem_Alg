@@ -31,8 +31,7 @@
 *.out
 *.app
 
-# pycache
-*.pyc
-
+# pycache, py env, and bin
+__pycache__/
 env/
 bin/
