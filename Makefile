@@ -30,15 +30,19 @@ run: all
 
 # Run the Python script to draw the two partitions
 drawPart:
-	python $(PYTHON_DIR)/visualize.py $(filter-out $@,$(MAKECMDGOALS))
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/vis/partitionsColored.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Run the Python script to draw the two partitions separately as plane graphs
 plane:
-	python $(PYTHON_DIR)/visualize_plane.py $(filter-out $@,$(MAKECMDGOALS))
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/vis/planePartitions.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Run the Python script to draw a graph
 draw:
-	python $(PYTHON_DIR)/drawGraph.py $(filter-out $@,$(MAKECMDGOALS))
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/vis/drawGraph.py $(filter-out $@,$(MAKECMDGOALS))
+
+# Run the ILP solver
+ilp:
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/ilp/biplanarSAT.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Clean compiled files
 clean:
