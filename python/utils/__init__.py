@@ -1,2 +1,3 @@
-from .visualization import draw_graph, draw_partitions
-from .graphUtils import read_graph, read_partitions, extract_vertices, output_graph
+from .visUtils import draw_graph, draw_partitions
+from .outputUtils import read_graph, read_partitions, extract_vertices, output_graph
+from .graphUtils import isPlanar

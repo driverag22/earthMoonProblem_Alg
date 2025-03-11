@@ -1,103 +1,111 @@
 import networkx as nx
-import gurobipy as gp
 import sys
-from gurobipy import GRB
-from utils import read_graph, extract_vertices, output_graph
+from pysat.solvers import Solver
+from pysat.card import CardEnc
+from utils import read_graph, extract_vertices, output_graph, isPlanar, draw_partitions
 
 
-def biplanar_callback(model, where):
-    if where == GRB.Callback.MIPSOL:
-        # retrieve the current solution values.
-        sol = model.cbGetSolution(model._x)
-        # extract the edges in partition 0 and partition 1.
-        partition0_edges = [e for e in model._edges if sol[e] < 0.5]
-        partition1_edges = [e for e in model._edges if sol[e] >= 0.5]
-
-        # Check planarity for partition 0.
-        G0 = nx.Graph()
-        G0.add_nodes_from(model._nodes)
-        G0.add_edges_from(partition0_edges)
-        is_planar0, cert0 = nx.check_planarity(G0, counterexample=True)
-        if not is_planar0:
-            # For partition 0 (where x[e] == 0), add constraints:
-            #   - sum_{e in cert0} x[e] >= 1
-            #     (at least one edge must be in partition 1)
-            #   - sum_{e in cert0} x[e] <= |cert0| - 1
-            #     (at least one edge must be in partition 0)
-            cert0_edges = [tuple(sorted(e)) for e in cert0.edges()]
-            model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert0_edges) >= 1)
-            model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert0_edges) <= len(cert0) - 1)
-
-        # Check planarity for partition 1.
-        G1 = nx.Graph()
-        G1.add_nodes_from(model._nodes)
-        G1.add_edges_from(partition1_edges)
-        is_planar1, cert1 = nx.check_planarity(G1, counterexample=True)
-        if not is_planar1:
-            cert1_edges = [tuple(sorted(e)) for e in cert1.edges()]
-            model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert1_edges) >= 1)
-            model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert1_edges) <= len(cert1) - 1)
+def edge_to_var(edge, edge_to_var_map):
+    """ Maps an edge to a SAT variable index. """
+    return edge_to_var_map[edge]
 
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        file_path = sys.argv[1]
-    else:
-        file_path = "data/test.txt"
+def add_planarity_clauses(solver, partition_edges, edge_to_var_map):
+    """
+    Adds CNF clauses to enforce planarity constraints.
+    If a subset of edges forms a non-planar subgraph,
+    at least one of those edges must be reassigned to
+    the other partition.
+    """
+    G = nx.Graph()
+    G.add_edges_from(partition_edges)
+    is_planar, violating_edges = isPlanar(G)
 
-    edges = read_graph(file_path)
-    nodes = extract_vertices(edges)
+    if not is_planar:
+        # Not all violating_edges to false(partition0)
+        # x_0 \lor x_1 \lor ...
+        clause = [edge_to_var(e, edge_to_var_map) for e in violating_edges]
+        solver.add_clause(clause)  # Ensure at least one edge changes partition
 
-    # Create a Gurobi model.
-    model = gp.Model("biplanar")
+        # Not all violating_edges to true (partition1)
+        # !x_0 \lor !x_1 \lor ... = !(x_0 \land x_1 \land ...)
+        clause2 = [-edge_to_var(e, edge_to_var_map) for e in violating_edges]
+        solver.add_clause(clause2)
+        return False
+    return True
 
-    # Create a binary variable for each edge:
-    # x[e] = 1 if edge e is assigned to partition 1;
-    #   0 if assigned to partition 0.
-    x = {}
-    for e in edges:
-        x[e] = model.addVar(vtype=GRB.BINARY, name=f"x_{e}")
-    model.update()
 
-    # Attach our data to the model for use in the callback.
-    model._x = x
-    model._edges = edges
-    # model._var_to_edge = {v: e for e, v in x.items()}
-    model._nodes = nodes
+def solve_biplanar(edges, nodes):
+    """ Solves the biplanar graph problem using a SAT solver. """
+    # map edges to SAT variables
+    edge_to_var_map = {e: i+1 for i, e in enumerate(edges)}
+    var_to_edge_map = {v: e for e, v in edge_to_var_map.items()}
 
-    # Add edge count constraints for each partition.
+    solver = Solver(name="cms")  # CryptoMiniSat solver
+
+    # Edge count constraints (each edge belongs to one of two partitions)
+    #    at least one
+    solver.add_clause([edge_to_var(e, edge_to_var_map) for e in edges])
+    #    at most one
+    solver.add_clause([-edge_to_var(e, edge_to_var_map) for e in edges])
+
     n = len(nodes)
-    model.addConstr(
-        gp.quicksum(x[e] for e in edges)
-        <= 3*n - 6, name="partition1_limit")
-    model.addConstr(
-        gp.quicksum(1 - x[e] for e in edges)
-        <= 3*n - 6, name="partition0_limit")
-    model.addConstr(
-        x[edges[0]] == 0, name="first_edge_constraint")
+    edgesLimit = 3 * n - 6
 
-    # Enable lazy constraints.
-    model.Params.LazyConstraints = 1
+    edge_vars = [edge_to_var(e, edge_to_var_map) for e in edges]
+    # Partition 1:
+    #          sum(1{x_e}) <= 3n - 6
+    cnf1 = CardEnc.atmost(lits=edge_vars,
+                          bound=edgesLimit, encoding=1)
+    for clause in cnf1.clauses:
+        solver.add_clause(clause)
 
-    # Optimize with the callback.
-    model.optimize(biplanar_callback)
+    comp_edge_vars = [-v for v in edge_vars]
+    # Partition 0:
+    #          sum(1 - 1{x_e}) <= 3n - 6
+    cnf2 = CardEnc.atleast(lits=comp_edge_vars,
+                           bound=edgesLimit, encoding=1)
+    for clause in cnf2.clauses:
+        solver.add_clause(clause)
 
-    # After optimization, if the model is feasible,
-    # the solution gives a valid biplanar partition.
-    if model.Status == GRB.OPTIMAL:
+    # Planarity constraints using lazy clause generation
+    while True:
+        if not solver.solve():
+            print("No biplanar partition exists for this graph.")
+            return None
+
+        # Extract current edge assignments from the SAT solver
+        model = solver.get_model()
         partition0, partition1 = [], []
-        for e in edges:
-            if x[e].X >= 0.5:
-                partition0.append(e)
-            if x[e].X < 0.5:
-                partition1.append(e)
-        print("Found a biplanar partition:")
-        print(partition0)
-        print(partition1)
-        output_graph("data/ILP_partitions.txt", [partition0, partition1])
-    else:
-        print("No biplanar partition exists for this graph.")
+        for v in model:
+            if v > 0:
+                if v in var_to_edge_map:
+                    partition1.append(var_to_edge_map[v])
+            elif -v in var_to_edge_map:
+                partition0.append(var_to_edge_map[-v])
+
+        # Check if both partitions are planar
+        valid0 = add_planarity_clauses(solver, partition0, edge_to_var_map)
+        valid1 = add_planarity_clauses(solver, partition1, edge_to_var_map)
+
+        if valid0 and valid1:
+            return partition0, partition1  # Found a valid partition
+
+
+if len(sys.argv) > 1:
+    file_path = sys.argv[1]
+else:
+    file_path = "data/test.txt"
+
+edges = read_graph(file_path)
+nodes = extract_vertices(edges)
+
+result = solve_biplanar(edges, nodes)
+
+if result:
+    partition0, partition1 = result
+    print("Found a biplanar partition:")
+    print("Partition 0:", partition0)
+    print("Partition 1:", partition1)
+    output_graph("data/SAT_partition.txt", [partition0, partition1])
+    draw_partitions(partition0, partition1, False)

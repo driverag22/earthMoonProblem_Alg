@@ -2,7 +2,7 @@ import networkx as nx
 import gurobipy as gp
 import sys
 from gurobipy import GRB
-from utils import read_graph, extract_vertices, output_graph, draw_partitions
+from utils import read_graph, extract_vertices, output_graph, draw_partitions, isPlanar
 
 
 def biplanar_callback(model, where):
@@ -17,30 +17,29 @@ def biplanar_callback(model, where):
         G0 = nx.Graph()
         G0.add_nodes_from(model._nodes)
         G0.add_edges_from(partition0_edges)
-        is_planar0, cert0 = nx.check_planarity(G0, counterexample=True)
+        is_planar0, edges0 = isPlanar(G0)
         if not is_planar0:
             # For partition 0 (where x[e] == 0), add constraints:
             #   - sum_{e in cert0} x[e] >= 1
             #     (at least one edge must be in partition 1)
             #   - sum_{e in cert0} x[e] <= |cert0| - 1
             #     (at least one edge must be in partition 0)
-            cert0_edges = [tuple(sorted(e)) for e in cert0.edges()]
             model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert0_edges) >= 1)
+                model._x[e] for e in edges0) >= 1)
             model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert0_edges) <= len(cert0) - 1)
+                model._x[e] for e in edges0) <= len(edges0) - 1)
 
         # Check planarity for partition 1.
         G1 = nx.Graph()
         G1.add_nodes_from(model._nodes)
         G1.add_edges_from(partition1_edges)
-        is_planar1, cert1 = nx.check_planarity(G1, counterexample=True)
+        is_planar1, edges1 = isPlanar(G1)
         if not is_planar1:
-            cert1_edges = [tuple(sorted(e)) for e in cert1.edges()]
             model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert1_edges) >= 1)
+                model._x[e] for e in edges1) >= 1)
             model.cbLazy(gp.quicksum(
-                model._x[e] for e in cert1_edges) <= len(cert1) - 1)
+                model._x[e] for e in edges1) <= len(edges1) - 1)
+
 
 
 if __name__ == "__main__":
@@ -98,7 +97,7 @@ if __name__ == "__main__":
         print("Found a biplanar partition:")
         print(partition0)
         print(partition1)
-        output_graph("data/ILP_partitions.txt", [partition0, partition1])
+        output_graph("data/ILP_partition.txt", [partition0, partition1])
         draw_partitions(partition0, partition1, False)
     else:
         print("No biplanar partition exists for this graph.")
