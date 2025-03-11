@@ -42,7 +42,7 @@ draw:
 
 # Run the ILP solver
 ilp:
-	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/ilp/biplanarSAT.py $(filter-out $@,$(MAKECMDGOALS))
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/ilp/biplanarILP.py $(filter-out $@,$(MAKECMDGOALS))
 
 # Clean compiled files
 clean:
