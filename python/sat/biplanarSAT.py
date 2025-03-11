@@ -24,15 +24,16 @@ def add_planarity_clauses(solver, partition_edges, edge_to_var_map):
     if not is_planar:
         # Not all violating_edges to false(partition0)
         # x_0 \lor x_1 \lor ...
-        clause = [edge_to_var(e, edge_to_var_map) for e in violating_edges]
-        solver.add_clause(clause)  # Ensure at least one edge changes partition
+        solver.add_clause([
+            edge_to_var(e, edge_to_var_map) for e in violating_edges
+        ])
 
         # Not all violating_edges to true (partition1)
         # !x_0 \lor !x_1 \lor ... = !(x_0 \land x_1 \land ...)
-        clause2 = [-edge_to_var(e, edge_to_var_map) for e in violating_edges]
-        solver.add_clause(clause2)
-        return False
-    return True
+        solver.add_clause([
+            -edge_to_var(e, edge_to_var_map) for e in violating_edges
+        ])
+    return is_planar
 
 
 def solve_biplanar(edges, nodes):
@@ -44,10 +45,9 @@ def solve_biplanar(edges, nodes):
     solver = Solver(name="cms")  # CryptoMiniSat solver
 
     # Edge count constraints (each edge belongs to one of two partitions)
-    #    at least one
-    solver.add_clause([edge_to_var(e, edge_to_var_map) for e in edges])
-    #    at most one
-    solver.add_clause([-edge_to_var(e, edge_to_var_map) for e in edges])
+    for e in edges:
+        solver.add_clause([edge_to_var(e, edge_to_var_map),
+                           -edge_to_var(e, edge_to_var_map)])
 
     n = len(nodes)
     edgesLimit = 3 * n - 6
@@ -55,18 +55,18 @@ def solve_biplanar(edges, nodes):
     edge_vars = [edge_to_var(e, edge_to_var_map) for e in edges]
     # Partition 1:
     #          sum(1{x_e}) <= 3n - 6
-    cnf1 = CardEnc.atmost(lits=edge_vars,
-                          bound=edgesLimit, encoding=1)
+    cnf1 = CardEnc.atmost(lits=edge_vars, bound=edgesLimit, encoding=1)
     for clause in cnf1.clauses:
         solver.add_clause(clause)
 
-    comp_edge_vars = [-v for v in edge_vars]
-    # Partition 0:
-    #          sum(1 - 1{x_e}) <= 3n - 6
-    cnf2 = CardEnc.atleast(lits=comp_edge_vars,
-                           bound=edgesLimit, encoding=1)
-    for clause in cnf2.clauses:
-        solver.add_clause(clause)
+    # For some reason, having this constraint as well as cnf0 somehow
+    # breaks things, so commented out for now.
+    # comp_edge_vars = [-v for v in edge_vars]
+    # # Partition 0:
+    # #          sum(1 - 1{x_e}) <= 3n - 6
+    # cnf2 = CardEnc.atmost(lits=comp_edge_vars, bound=edgesLimit, encoding=1)
+    # for clause in cnf2.clauses:
+    #     solver.add_clause(clause)
 
     # Planarity constraints using lazy clause generation
     while True:
@@ -78,9 +78,8 @@ def solve_biplanar(edges, nodes):
         model = solver.get_model()
         partition0, partition1 = [], []
         for v in model:
-            if v > 0:
-                if v in var_to_edge_map:
-                    partition1.append(var_to_edge_map[v])
+            if v in var_to_edge_map:
+                partition1.append(var_to_edge_map[v])
             elif -v in var_to_edge_map:
                 partition0.append(var_to_edge_map[-v])
 
@@ -107,5 +106,9 @@ if result:
     print("Found a biplanar partition:")
     print("Partition 0:", partition0)
     print("Partition 1:", partition1)
+    print(edges)
     output_graph("data/SAT_partition.txt", [partition0, partition1])
     draw_partitions(partition0, partition1, False)
+else:
+    print("Found no biplanar partition")
+    output_graph("data/SAT_partition_failed.txt", [edges])
