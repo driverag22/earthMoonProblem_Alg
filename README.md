@@ -21,10 +21,19 @@ Both inherit functions form the module helperFunctions.
 │   └── main.cpp
 ├── data/
 ├── python/
-│   ├── requirements.txt
-│   ├── visualize.py
-│   ├── visualize_plane.py
-│   └── drawGraph.py
+│   ├── utils/
+│   │   ├── graphUtils.py
+│   │   ├── visUtils.py
+│   │   └── outputUtils.py
+│   ├── vis/
+│   │   ├── drawGraph.py
+│   │   ├── partitionsColored.py
+│   │   └── planePartitions.py
+│   ├── ilp/
+│   │   └── biplanarILP.py
+│   ├── sat/
+│   │   └── biplanarSAT.py
+│   └── requirements.txt
 └── Makefile
 ```
 
@@ -44,10 +53,20 @@ Every function is commented, so if something is unclear consider looking through
 ### python
 To install the requirements run `pip install -r python/requirements.txt`
 
-The python code is only used to draw the graphs.
-  - `drawGraph.py` draws the graph from the file passed as an argument. Example files can be found under `data`
-  - `visualize.py` draws the graph in `~/data/partitions.txt` with the two partitions colored red and blue.
-  - `visualize_plane.py` draws the partitions of the graph in `data/partitions.txt` as plane graphs (if possible).
+The `python/utils` directory contains helper function.
+
+The `python/vis` directory contain scode to draw the graphs.
+  - `drawGraph.py` draws the graph from the file passed as an argument (default: `data/test.txt`).
+  - `partitionsColored.py` draws the graph from the file passed as an argument 
+  (default: `~/data/partitions.txt`) with the two partitions colored red and blue.
+  - `planePartitions.py` draws the partitions of the graph from the file passed as an argument 
+  (default: in `data/partitions.txt`) as plane graphs (if possible).
+Example graph files can be found under `data`
+
+The `python/ilp` and `python/sat` directories contain the code for the ILP 
+and SAT solvers to find biplanar partitions of graphs (respectively).
+They (attempt to) find biplanar partitions of the graph from the file passed as 
+argument (default: `data/test.txt`).
 
 ### data
 The `data` directory is where we store different graphs and partitions.
@@ -93,4 +112,8 @@ For exampel, to plot a candidate graph, you'd have to call `make drawPart data/c
 
 To simply draw an arbitrary graph (not partitioned) use `make draw` and give the (relative) file path as input when asked
 (e.g. `c5_44443.txt`), or pass it directly (e.g. `make draw c5_44443.txt`).
+
+### ILP and SAT
+Simply run `make ilp` and `make sat` respectively, passing as argument the file describing the graph.
+If a partition is found, it is saved to `data/SAT_partition.txt` and `data/ILP_partition.txt` respectively.
 
