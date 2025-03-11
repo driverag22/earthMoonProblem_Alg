@@ -2,16 +2,15 @@
 #include "candidateBuilder.h"
 
 int main() {
-    int n1 = 3, n2 = 4;
-    int n = n1*n2;
-    maxEdges = 3 * n - 6;
-    // wheel grah with two middle vertices
-    auto* edges = strongProductEdge(pathGraphEdge(n1), n1, completeGraphEdge(n2), n2);
-    /* delete edgesFirst; */
-    /* preprocessEdges(edges, n); */
-    printEdges(*edges);
-    /* testBiplanarity(edges, n); */
-    /* delete edges; */
+    int n = 15;
+    Graph g = maximalPlanarGraph(n);
+    if (isPlanar(g)) {
+        cout << "yes" << endl;
+        outputGraph(g, "candidateDisprove");
+    } else {
+        cout << "no" << endl;
+    }
+    // wheel graph with two middle vertices
     // (numVertLow, numVertHigh, numAttempts, bool independenceNumbe, bool chromaticNumber)
     /* computeCandidateGraphs(20, 80, 100000, true, true); */
     return 0;

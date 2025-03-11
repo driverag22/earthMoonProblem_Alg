@@ -2,15 +2,14 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def draw_graph(edges, title="Graph"):
+def draw_graph(edges, plane=False):
     """Draws a graph."""
     G = nx.Graph()
     G.add_edges_from(edges)
-    pos = nx.spring_layout(G)
+    pos = nx.planar_layout(G) if (nx.check_planarity(G)[0] and plane) else nx.spring_layout(G)
     plt.figure(figsize=(8, 6))
     nx.draw(G, pos, with_labels=True,
             edge_color="blue", node_color="lightgray")
-    plt.title(title)
     plt.show()
 
 

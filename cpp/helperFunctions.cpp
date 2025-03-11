@@ -162,6 +162,31 @@ Graph completeGraph(int numVertices) {
     return G;
 }
 
+/// Returns a maximal planar graph with [numVertices] vertices.
+Graph maximalPlanarGraph(int numVertices) {
+    // initial triangle
+    vector<Edge> edges = { {0, 1}, {1, 2}, {2, 0} };
+    
+    // Add vertices one by one
+    for (int i = 3; i < numVertices; i++) {
+        int u1 = (i - 1) % i;   // last vertex
+        int u2 = (i - 2) % i;   // second-last vertex
+        int u3 = (i - 3) % i;   // third-last vertex
+
+        // Connect new vertex to all three vertices forming the triangle
+        edges.push_back({i, u1});
+        edges.push_back({i, u2});
+        edges.push_back({i, u3});
+    }
+
+    Graph G(numVertices);
+    for (const auto& e : edges) {
+        add_edge(e.first, e.second, G);
+    }
+
+    return G;
+}
+
 /// Returns path edge-set on [numVertices] vertices.
 vector<Edge>* pathGraphEdge(int numVertices) {
     auto* edges = new vector<Edge>();
