@@ -49,6 +49,9 @@ def solve_biplanar(edges, nodes):
         solver.add_clause([edge_to_var(e, edge_to_var_map),
                            -edge_to_var(e, edge_to_var_map)])
 
+    # Fix first edge to one partition to avoid symmetric cases.
+    solver.add_clause([edge_to_var(edges[0], edge_to_var_map)])
+
     n = len(nodes)
     edgesLimit = 3 * n - 6
 
@@ -91,10 +94,9 @@ def solve_biplanar(edges, nodes):
             return partition0, partition1  # Found a valid partition
 
 
-if len(sys.argv) > 1:
-    file_path = sys.argv[1]
-else:
-    file_path = "data/test.txt"
+# get input and output files
+file_path = sys.argv[1] if len(sys.argv) > 1 else "data/test.txt"
+output_file = sys.argv[2] if len(sys.argv) > 2 else "data/SAT_partition.txt"
 
 edges = read_graph(file_path)
 nodes = extract_vertices(edges)
@@ -107,8 +109,8 @@ if result:
     print("Partition 0:", partition0)
     print("Partition 1:", partition1)
     print(edges)
-    output_graph("data/SAT_partition.txt", [partition0, partition1])
+    output_graph(output_file, [partition0, partition1])
     draw_partitions(partition0, partition1, False)
 else:
     print("Found no biplanar partition")
-    output_graph("data/SAT_partition_failed.txt", [edges])
+    output_graph(output_file.replace(".txt", "_failed.txt"), [edges])
