@@ -62,8 +62,8 @@ Graph cycleGraph(int numVertices);
 /// Returns complet Graph on [numVertices] vertices.
 Graph completeGraph(int numVertices);
 
-/// Returns a maximal planar graph with [numVertices] vertices.
-Graph maximalPlanarGraph(int numVertices);
+/// Returns a maximal planar graph edge set with [numVertices] vertices.
+vector<Edge>* maximalPlanarGraphEdge(int numVertices);
 
 /// Returns path edge-set on [numVertices] vertices.
 vector<Edge>* pathGraphEdge(int numVertices);
