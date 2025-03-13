@@ -18,6 +18,9 @@ using Edge = pair<int, int>;
 /// Returns graph corresponding to given edge list.
 Graph constructGraph(vector<Edge>& edges, int numVertices);
 
+/// Returns edge list corresponding to given graph.
+vector<Edge>* extractEdges(Graph& g);
+
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g);
 

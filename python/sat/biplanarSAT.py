@@ -54,6 +54,7 @@ def solve_biplanar(edges, nodes):
 
     n = len(nodes)
     edgesLimit = 3 * n - 6
+    edgesUpperBound = n - edgesLimit
 
     edge_vars = [edge_to_var(e, edge_to_var_map) for e in edges]
     # Partition 1:
@@ -65,11 +66,11 @@ def solve_biplanar(edges, nodes):
     # For some reason, having this constraint as well as cnf0 somehow
     # breaks things, so commented out for now.
     # comp_edge_vars = [-v for v in edge_vars]
-    # # Partition 0:
-    # #          sum(1 - 1{x_e}) <= 3n - 6
-    # cnf2 = CardEnc.atmost(lits=comp_edge_vars, bound=edgesLimit, encoding=1)
-    # for clause in cnf2.clauses:
-    #     solver.add_clause(clause)
+    # Partition 0:
+    #          sum(1 - 1{x_e}) <= 3n - 6 <=> \sum(1{x_e} => num_edges - 3n + 6
+    cnf2 = CardEnc.atleast(lits=edge_vars, bound=edgesUpperBound, encoding=1)
+    for clause in cnf2.clauses:
+        solver.add_clause(clause)
 
     # Planarity constraints using lazy clause generation
     while True:

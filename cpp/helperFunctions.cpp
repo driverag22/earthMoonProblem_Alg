@@ -8,6 +8,16 @@ Graph constructGraph(vector<Edge>& edges, int numVerices) {
     return G;
 }
 
+/// Returns edge list corresponding to given graph.
+vector<Edge>* extractEdges(Graph& g) {
+    vector<Edge>* edgeSet = new vector<Edge>;
+    for (const auto& e : make_iterator_range(edges(g))) {
+        edgeSet->emplace_back(source(e,g), target(e,g));
+    }
+    return edgeSet;
+}
+
+
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g) {
     return boyer_myrvold_planarity_test(g);
