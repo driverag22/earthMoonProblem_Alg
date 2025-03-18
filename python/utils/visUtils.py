@@ -4,8 +4,23 @@ import numpy as np
 import matplotlib.cm as cm
 
 
-def draw_graph(edges, plane=False):
+def draw_graph(edges, plane=False, blow_up=True):
     """Draws a graph."""
+    all_nodes = set()
+    for edge in edges:
+        all_nodes.update(edge)
+
+    num_vertices = len(all_nodes)
+    node_list = sorted(all_nodes)  # Ensure consistent ordering
+
+    if blow_up:
+        n = num_vertices // 2
+        colormap = cm.get_cmap("tab10" if n <= 10 else "tab20")
+        colors = [colormap(i / max(1, n - 1)) for i in range(n)]
+        node_colors = {node: colors[i % n] for i, node in enumerate(node_list)}
+    else:
+        node_colors = {node: "lightgray" for node in all_nodes}
+
     G = nx.Graph()
     G.add_edges_from(edges)
     if plane:
@@ -17,8 +32,8 @@ def draw_graph(edges, plane=False):
     else:
         pos = nx.spring_layout(G)
     plt.figure(figsize=(8, 6))
-    nx.draw(G, pos, with_labels=True,
-            edge_color="blue", node_color="lightgray")
+    nx.draw(G, pos, with_labels=True, edge_color="blue",
+            node_color=[node_colors[node] for node in G.nodes()])
     plt.show()
 
 
