@@ -44,6 +44,10 @@ draw:
 drawPlane:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/vis/drawPlaneGraph.py $(filter-out $@,$(MAKECMDGOALS))
 
+# Run the Python script to draw the two partitions with colors in same blow-up colored the same.
+drawPartBlowUp:
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/vis/partitionsColoredBlowUp.py $(filter-out $@,$(MAKECMDGOALS))
+
 # Run the ILP solver
 ilp:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/ilp/biplanarILP.py $(filter-out $@,$(MAKECMDGOALS))
