@@ -50,9 +50,6 @@ def solve_biplanar(edges, nodes):
         solver.add_clause([edge_to_var(e, edge_to_var_map),
                            -edge_to_var(e, edge_to_var_map)])
 
-    # Fix first edge to one partition to avoid symmetric cases.
-    solver.add_clause([edge_to_var(edges[0], edge_to_var_map)])
-
     n = len(nodes)
     edgesLimit = 3 * n - 6
     edgesUpperBound = n - edgesLimit
