@@ -9,7 +9,7 @@
 
 #include "helperFunctions.h"
 
-using namespace boost;
+/* using namespace boost; */
 using namespace std;
 
 /// Global var

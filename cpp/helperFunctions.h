@@ -5,14 +5,16 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <utility>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/boyer_myrvold_planar_test.hpp>
 
-using namespace boost;
+/* using namespace boost; */
 using namespace std;
 
 /// Graph types
-using Graph = adjacency_list<vecS, vecS, undirectedS>;
+/* using Graph = adjacency_list<vecS, vecS, undirectedS>; */
+using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS, boost::no_property, boost::property<boost::edge_index_t, int>>;
 using Edge = pair<int, int>;
 
 /// Returns graph corresponding to given edge list.
@@ -23,6 +25,10 @@ vector<Edge>* extractEdges(Graph& g);
 
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g);
+
+/// Returns whether given graph is planar, and finds a Kuratowski subgraph 
+/// if it is not.
+bool isPlanarSubgraph(Graph& edges, vector<Edge>* violatingEdges);
 
 /// Helper function to output graph.
 void outputGraph(Graph& g, string filename = "candidate");
@@ -53,6 +59,9 @@ bool findIndependentSet(Graph& g, vector<int> independentSet, int index, int k);
 
 /// Checks if the independence number of [g] is at most [k].
 bool independenceNumberAtMost(Graph& g, int k);
+
+/// Determines if edge (u,v) can be added while maintaining planarity.
+bool canAddEdgePlanar(Graph& G, int u, int v);
 ////// 
 
 ////// Graph constructors
@@ -66,22 +75,25 @@ Graph cycleGraph(int numVertices);
 Graph completeGraph(int numVertices);
 
 /// Returns a maximal planar graph edge set with [numVertices] vertices.
-vector<Edge>* maximalPlanarGraphEdge(int numVertices);
+vector<Edge> maximalPlanarGraphEdge(int numVertices);
 
 /// Returns path edge-set on [numVertices] vertices.
-vector<Edge>* pathGraphEdge(int numVertices);
+vector<Edge> pathGraphEdge(int numVertices);
 
 /// Returns cycleGraph edge-set on [numVertices] vertices.
-vector<Edge>* cycleGraphEdge(int numVertices);
+vector<Edge> cycleGraphEdge(int numVertices);
 
 /// Returns complete graph edge-set on [numVertices] vertices.
-vector<Edge>* completeGraphEdge(int numVertices);
+vector<Edge> completeGraphEdge(int numVertices);
 
 /// Returns bipartite graph edge-set on [numVerticesA, numVerticesB] vertices.
-vector<Edge>* bipartiteGraphEdge(int numVerticesA, int numVerticesB);
+vector<Edge> bipartiteGraphEdge(int numVerticesA, int numVerticesB);
 
 /// Returns k-wheel graph edge-set on [numVertices - k, k] vertices.
-vector<Edge>* wheelGraphEdge(int numVertices, int k);
+vector<Edge> wheelGraphEdge(int numVertices, int k);
+
+/// Returns edge-set of a triangular grid maximal planar graph of size [rows x cols].
+vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols);
 ////// 
 
 ////// Graph operations
@@ -103,6 +115,9 @@ vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1,
 
 /// Returns the 2-blowup of the given graph.
 vector<Edge>* blowup(const vector<Edge>* graph, int n);
+
+/// Adds edge indices to [G] (to, e.g., extract Kuratowski subgraph)
+void assignEdgeIndices(Graph& G);
 
 /// Prints progress bar.
 void printProgressBar(int progress, int total, string message = "");

@@ -1,4 +1,5 @@
 #include "helperFunctions.h"
+#include <random>
 
 /// Returns graph corresponding to given edge list.
 Graph constructGraph(vector<Edge>& edges, int numVerices) {
@@ -21,6 +22,35 @@ vector<Edge>* extractEdges(Graph& g) {
 /// Returns whether given graph is planar.
 bool isPlanar(Graph& g) {
     return boyer_myrvold_planarity_test(g);
+}
+
+/// Returns whether given graph is planar, and finds a Kuratowski subgraph 
+/// if it is not.
+bool isPlanarSubgraph(Graph& g, vector<Edge>* kuratowskiEdges) {
+    // If graph is planar, return true
+    if (isPlanar(g)) {
+        return true;
+    }
+    assignEdgeIndices(g);
+
+    // If not planar, extract the Kuratowski subgraph
+    if (kuratowskiEdges) {
+        kuratowskiEdges->clear();
+        vector<boost::graph_traits<Graph>::edge_descriptor> kuratowskiEdgesDesc;
+
+        // Call Boost planarity test with edge index map
+        // Use Boost's function to get the Kuratowski subgraph
+        boyer_myrvold_planarity_test(
+            g,
+            boost::boyer_myrvold_params::kuratowski_subgraph = back_inserter(kuratowskiEdgesDesc)
+        );
+
+        // Convert edge descriptors to pairs of vertex indices
+        for (auto e : kuratowskiEdgesDesc) {
+            kuratowskiEdges->emplace_back(source(e, g), target(e, g));
+        }
+    }
+    return false;
 }
 
 /// Helper function to output graph.
@@ -139,6 +169,16 @@ bool independenceNumberAtMost(Graph& g, int k) {
     vector<int> indeptSet;
     return !findIndependentSet(g, indeptSet, 0, k+1);
 }
+
+/// Determines if edge (u,v) can be added while maintaining planarity.
+bool canAddEdgePlanar(Graph& G, int u, int v) {
+    // add edge
+    auto e = add_edge(u, v, G).first;
+    bool isStillPlanar = isPlanar(G);
+    // remove edge
+    remove_edge(e, G);
+    return isStillPlanar;
+}
 //////
 
 ////// Graph constructors
@@ -173,79 +213,91 @@ Graph completeGraph(int numVertices) {
 }
 
 /// Returns a maximal planar graph edge set with [numVertices] vertices.
-vector<Edge>* maximalPlanarGraphEdge(int numVertices) {
-    // initial triangle
-    vector<Edge>* edges = new vector<Edge>{{0, 1}, {1, 2}, {2, 0}};
+vector<Edge> maximalPlanarGraphEdge(int numVertices) {
+    vector<Edge> edges = {{0, 1}, {1, 2}, {2, 0}};
     
-    // Add vertices one by one
     for (int i = 3; i < numVertices; i++) {
-        int u1 = (i - 1) % i;   // last vertex
-        int u2 = (i - 2) % i;   // second-last vertex
-        int u3 = (i - 3) % i;   // third-last vertex
-
-        // Connect new vertex to all three vertices forming the triangle
-        edges->push_back({i, u1});
-        edges->push_back({i, u2});
-        edges->push_back({i, u3});
+        edges.emplace_back(i, i - 1);
+        edges.emplace_back(i, i - 2);
+        edges.emplace_back(i, i - 3);
     }
-
     return edges;
 }
 
-/// Returns path edge-set on [numVertices] vertices.
-vector<Edge>* pathGraphEdge(int numVertices) {
-    auto* edges = new vector<Edge>();
+/// Returns a path graph edge-set on [numVertices] vertices.
+vector<Edge> pathGraphEdge(int numVertices) {
+    vector<Edge> edges;
+    edges.reserve(numVertices - 1);
     for (int i = 0; i < numVertices - 1; ++i) {
-        edges->push_back({i, i + 1});
+        edges.emplace_back(i, i + 1);
     }
     return edges;
 }
 
-/// Returns cycle edge-set on [numVertices] vertices.
-vector<Edge>* cycleGraphEdge(int numVertices) {
-    auto* edges = new vector<Edge>();
-    for (int i = 0; i < numVertices; ++i) {
-        int j = (i + 1) % numVertices;
-        edges->push_back({i, j});
-    }
+/// Returns a cycle graph edge-set on [numVertices] vertices.
+vector<Edge> cycleGraphEdge(int numVertices) {
+    vector<Edge> edges = pathGraphEdge(numVertices);
+    edges.emplace_back(numVertices - 1, 0);
     return edges;
 }
 
-/// Returns complete graph edge-set on [numVertices] vertices.
-vector<Edge>* completeGraphEdge(int numVertices) {
-    auto* edges = new vector<Edge>();
+/// Returns a complete graph edge-set on [numVertices] vertices.
+vector<Edge> completeGraphEdge(int numVertices) {
+    vector<Edge> edges;
+    edges.reserve((numVertices * (numVertices - 1)) / 2);
     for (int i = 0; i < numVertices; ++i) {
         for (int j = i + 1; j < numVertices; ++j) {
-            edges->push_back({i, j});
+            edges.emplace_back(i, j);
         }
     }
     return edges;
 }
 
-/// Returns bipartite graph edge-set on [numVerticesA, numVerticesB] vertices.
-vector<Edge>* bipartiteGraphEdge(int numVerticesA, int numVerticesB) {
-    auto* edges = new vector<Edge>();
+/// Returns a bipartite graph edge-set on [numVerticesA, numVerticesB] vertices.
+vector<Edge> bipartiteGraphEdge(int numVerticesA, int numVerticesB) {
+    vector<Edge> edges;
+    edges.reserve(numVerticesA * numVerticesB);
     for (int i = 0; i < numVerticesA; ++i) {
-        for (int j = 0; j < numVerticesB; ++j) {  
-            edges->push_back({i, numVerticesA + j});
+        for (int j = 0; j < numVerticesB; ++j) {
+            edges.emplace_back(i, numVerticesA + j);
         }
     }
     return edges;
 }
 
-/// Returns k-wheel graph edge-set on [numVertices - k, k] vertices.
-vector<Edge>* wheelGraphEdge(int numVertices, int k) {
-    // make cycle
-    auto* edges = cycleGraphEdge(numVertices-k);
-    // add edges from partition of k vertices
+/// Returns a k-wheel graph edge-set on [numVertices - k, k] vertices.
+vector<Edge> wheelGraphEdge(int numVertices, int k) {
+    vector<Edge> edges = cycleGraphEdge(numVertices - k);
+    edges.reserve(edges.size() + (numVertices - k) * k);
     for (int j = numVertices - k; j < numVertices; j++) {
         for (int i = 0; i < numVertices - k; ++i) {
-            edges->push_back({i, j});
+            edges.emplace_back(i, j);
         }
     }
     return edges;
 }
 
+/// Returns an edge-set of a triangular grid maximal planar graph of size [rows x cols].
+vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
+    vector<Edge> edges;
+    auto index = [cols](int r, int c) { return r * cols + c; };
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            if (c + 1 < cols) edges.emplace_back(index(r, c), index(r, c + 1));
+            if (r + 1 < rows) edges.emplace_back(index(r, c), index(r + 1, c));
+            if (r + 1 < rows && c + 1 < cols) edges.emplace_back(index(r, c), index(r + 1, c + 1));
+        }
+    }
+    for (int c = 1; c < cols; c++) {
+        edges.emplace_back(index(0,0), index(0, c));
+        edges.emplace_back(index(0,0), index(rows - 1, c));
+    }
+    for (int r = 1; r < rows - 1; r++) {
+        edges.emplace_back(index(0,0), index(r, 0));
+        edges.emplace_back(index(0,0), index(r, cols - 1));
+    }
+    return edges;
+}
 //////
 
 ////// Graph operations
@@ -356,6 +408,17 @@ vector<Edge>* blowup(const vector<Edge>* graph, int n) {
         edges->push_back({e.first, e.second + n});
     }
     return edges;
+}
+
+/// Adds edge indices to [G] (to, e.g., extract Kuratowski subgraph)
+void assignEdgeIndices(Graph& G) {
+    boost::property_map<Graph, boost::edge_index_t>::type edge_index_map = get(boost::edge_index, G);
+    int edge_id = 0;
+
+    // Iterate over all edges in the graph and assign an index
+    for (auto e : make_iterator_range(edges(G))) {
+        edge_index_map[e] = edge_id++;
+    }
 }
 //////
 

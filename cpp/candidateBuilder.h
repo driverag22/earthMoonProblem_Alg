@@ -8,7 +8,6 @@
 
 #include "helperFunctions.h"
 
-using namespace boost;
 using namespace std;
 
 /// Determines if edge (u,v) can be added while maintaining planarity.

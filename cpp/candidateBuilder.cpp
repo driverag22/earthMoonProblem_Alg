@@ -1,16 +1,6 @@
 #include "candidateBuilder.h"
 #include <random>
 
-/// Determines if edge (u,v) can be added while maintaining planarity.
-bool canAddEdgePlanar(Graph& G, int u, int v) {
-    // add edge
-    auto e = add_edge(u, v, G).first;
-    bool isStillPlanar = isPlanar(G);
-    // remove edge
-    remove_edge(e, G);
-    return isStillPlanar;
-}
-
 /// Returns a *random* maximal planar graph on n vertices.
 Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph) {
     // we start with a simple cycle on n vertices and add edges to it
@@ -21,7 +11,7 @@ Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph) {
         for (auto e : make_iterator_range(edges(*avoidGraph))) {
             int u = source(e, *avoidGraph);
             int v = target(e, *avoidGraph);
-            if (u > v) std::swap(u, v);
+            if (u > v) swap(u, v);
             edgesToAvoid.insert({u, v});
         }
     }
@@ -38,7 +28,7 @@ Graph buildMaximalPlanarGraph(int n, const Graph* avoidGraph) {
     }
 
     // Shuffle edges
-    static std::mt19937 rng{ std::random_device{}() };
+    static mt19937 rng{ random_device{}() };
     shuffle(allPossible.begin(), allPossible.end(), rng);
 
     // Try adding each edge, keep it if the graph stays planar

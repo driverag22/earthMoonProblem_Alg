@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = -lboost_graph  # Boost Graph Library
+LDFLAGS = -lboost_graph  -lminisat # Boost Graph Library
 
 # Directories
 SRC_DIR = cpp
@@ -13,7 +13,7 @@ PYTHON_DIR = python
 TARGET = $(BIN_DIR)/program
 
 # Source and object files
-SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/helperFunctions.cpp
+SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/biplanarSAT.cpp $(SRC_DIR)/satSolver.h $(SRC_DIR)/helperFunctions.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule: Compile everything
