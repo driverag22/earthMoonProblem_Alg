@@ -1,5 +1,4 @@
 #include "helperFunctions.h"
-#include <random>
 
 /// Returns graph corresponding to given edge list.
 Graph constructGraph(vector<Edge>& edges, int numVerices) {
@@ -302,10 +301,10 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
-void removeVertexEdges(vector<Edge>* edges, int vertex) {
-    edges->erase(remove_if(edges->begin(), edges->end(), 
+void removeVertexEdges(vector<Edge>& edges, int vertex) {
+    edges.erase(remove_if(edges.begin(), edges.end(), 
                 [vertex](const Edge& e) { return e.first == vertex || e.second == vertex; }),
-                edges->end());
+                edges.end());
 }
 
 /// Removes a specific edge.
@@ -351,24 +350,24 @@ Graph graphUnion(const Graph& g1, const Graph& g2) {
 }
 
 /// Returns the strong product of two graphs.
-vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1, 
-                                const vector<Edge>* graph2, int n2) {
+vector<Edge> strongProductEdge(const vector<Edge>& graph1, int n1, 
+                                const vector<Edge>& graph2, int n2) {
     // create adjacency matrices for G1 and G2 
     // to quickly check if (u,v) is an edge of either
     vector<vector<bool>> adj1(n1, vector<bool>(n1, false));
     vector<vector<bool>> adj2(n2, vector<bool>(n2, false));
-    for (const Edge& e : *graph1) {
+    for (const Edge& e : graph1) {
         int u = e.first, v = e.second;
         adj1[u][v] = true;
         adj1[v][u] = true;
     }
-    for (const Edge& e : *graph2) {
+    for (const Edge& e : graph2) {
         int u = e.first, v = e.second;
         adj2[u][v] = true;
         adj2[v][u] = true;
     }
     
-    vector<Edge>* productEdges = new vector<Edge>();
+    vector<Edge> productEdges;
     // we store the cartesian product in a 1D array
     // flattening: (a,b) in V(G1)*V(G2) = a * n2 + b
 
@@ -388,7 +387,7 @@ vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1,
                     int index2 = u2 * n2 + v2; // index2 \cong (u2, v2)
 
                     if (index1 < index2) {
-                        productEdges->push_back(make_pair(index1, index2));
+                        productEdges.emplace_back(make_pair(index1, index2));
                     }
                 }
             }
@@ -399,13 +398,13 @@ vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1,
 }
 
 /// Returns the 2-blowup of the given graph.
-vector<Edge>* blowup(const vector<Edge>* graph, int n) {
-    auto* edges = new vector<Edge>();
-    for (auto& e : *graph) {
-        edges->push_back({e.first, e.second});
-        edges->push_back({e.first + n, e.second + n});
-        edges->push_back({e.first + n, e.second});
-        edges->push_back({e.first, e.second + n});
+vector<Edge> blowup(const vector<Edge>& graph, int n) {
+    vector<Edge> edges;
+    for (const auto& e : graph) {
+        edges.emplace_back(e.first, e.second);
+        edges.emplace_back(e.first + n, e.second + n);
+        edges.emplace_back(e.first + n, e.second);
+        edges.emplace_back(e.first, e.second + n);
     }
     return edges;
 }

@@ -4,32 +4,25 @@
 
 int main() {
     /* vector<Edge>* edges = triangularGridMaxPlanarGraphEdge(4, 4); */
-    /* edges = blowup(edges, 16); */
-    int n = 8;
-    vector<Edge> edges = completeGraphEdge(8);
-    Graph g = constructGraph(edges, 8);
-    if (isBiplanarSAT(edges, 8)) {
-        cout << "planarrr" << endl;
+    int n1 = 5, n2 = 4;
+    int n = n1 * n2 - 1;
+    vector<Edge> edges = strongProductEdge(pathGraphEdge(n1), n1, 
+                                           completeGraphEdge(n2), n2);
+    removeVertexEdges(edges, 19);
+    edges.emplace_back(0,18);
+    edges.emplace_back(1,17);
+    edges.emplace_back(2,16);
+    edges.emplace_back(3,15);
+    Graph g = constructGraph(edges, n);
+
+    auto start = chrono::high_resolution_clock::now();
+    if (isBiplanarSAT(edges, n)) {
+        cout << "biplanarrr" << endl;
     }
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = end - start;
+    cout << "Took: " << elapsed.count() << " seconds.\n";
 
-    /* if (isBiplanarSAT(3, *completeGraphEdge(3))) { */
-    /*     cout << "biplanar!" << endl; */
-    /* } */
-    /* for (int n = 11; n < 13; n++) { */
-    /*     Graph g = buildMaximalPlanarGraph(n); */
-    /*     vector<Edge>* edges = extractEdges(g); */
-    /*     edges = blowup(edges, n); */
-    /*     g = constructGraph(*edges, n); */
-    /*     outputGraph(g, "bMaxPlanar" + to_string(n)); */
-    /*     delete edges; */
-
-    /*     vector<Edge>* edges2 = maximalPlanarGraphEdge(n); */
-    /*     edges2 = blowup(edges2, n); */
-    /*     g = constructGraph(*edges2, n); */
-    /*     outputGraph(g, "maxPlanar" + to_string(n)); */
-    /*     delete edges2; */
-    /* } */
-    // wheel graph with two middle vertices
     // (numVertLow, numVertHigh, numAttempts, bool independenceNumbe, bool chromaticNumber)
     /* computeCandidateGraphs(20, 80, 100000, true, true); */
     return 0;

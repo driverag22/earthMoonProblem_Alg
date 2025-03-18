@@ -98,7 +98,7 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols);
 
 ////// Graph operations
 /// Removes all edges connected to a specific vertex.
-void removeVertexEdges(vector<Edge>* edges, int vertex);
+void removeVertexEdges(vector<Edge>& edges, int vertex);
 
 /// Removes a specific edge.
 void removeEdge(vector<Edge>& edges, const Edge& target);
@@ -110,11 +110,11 @@ Graph graphComplement(const Graph& g);
 Graph graphUnion(const Graph& g1, const Graph& g2);
 
 /// Returns the strong product of two graphs.
-vector<Edge>* strongProductEdge(const vector<Edge>* graph1, int n1, 
-                                const vector<Edge>* graph2, int n2);
+vector<Edge> strongProductEdge(const vector<Edge>& graph1, int n1, 
+                               const vector<Edge>& graph2, int n2);
 
 /// Returns the 2-blowup of the given graph.
-vector<Edge>* blowup(const vector<Edge>* graph, int n);
+vector<Edge> blowup(const vector<Edge>& graph, int n);
 
 /// Adds edge indices to [G] (to, e.g., extract Kuratowski subgraph)
 void assignEdgeIndices(Graph& G);
