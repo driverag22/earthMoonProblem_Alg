@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <array>
 #include <fstream>
 #include <chrono>
 #include <utility>
@@ -94,6 +96,11 @@ vector<Edge> wheelGraphEdge(int numVertices, int k);
 
 /// Returns edge-set of a triangular grid maximal planar graph of size [rows x cols].
 vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols);
+
+/// Returns edge-set of a balanced max planar graph (start with three vertices, 
+/// put next vertex in a triangle and connect it to the three vertices).
+/// Assumes n \geq 3.
+vector<Edge> balancedMaxPlanarGraphEdge(int n);
 ////// 
 
 ////// Graph operations

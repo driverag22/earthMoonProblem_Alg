@@ -297,6 +297,27 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
     }
     return edges;
 }
+
+/// Returns edge-set of a balanced max planar graph (start with three vertices, 
+/// put next vertex in a triangle and connect it to the three vertices).
+/// Assumes n \geq 3.
+vector<Edge> balancedMaxPlanarGraphEdge(int n) {
+    vector<Edge> edges;
+    // basic triangle
+    edges.push_back({0,1}); edges.push_back({0,2}); edges.push_back({1,2});
+    stack<array<int, 3>> Q;
+    Q.push({{0,1,2}});
+    for (int i = 3; i < n; i++) {
+        array<int, 3> vert = Q.top();
+        Q.pop();
+        for (int v : vert)
+            edges.push_back({i,v});
+        Q.push({{i, vert[0], vert[1]}});
+        Q.push({{i, vert[0], vert[2]}});
+        Q.push({{i, vert[1], vert[2]}});
+    }
+    return edges;
+}
 //////
 
 ////// Graph operations
