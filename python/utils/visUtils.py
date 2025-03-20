@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.cm as cm
 
 
-def draw_graph(edges, plane=False, blow_up=True):
+def draw_graph(edges, plane=False, blow_up=False):
     """Draws a graph."""
     all_nodes = set()
     for edge in edges:

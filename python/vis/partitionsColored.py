@@ -11,4 +11,4 @@ if __name__ == "__main__":
     partition1, partition2 = read_partitions(file_path)
 
     if partition1 and partition2:
-        draw_partitions(partition1, partition2, False, False)
+        draw_partitions(partition1, partition2)
