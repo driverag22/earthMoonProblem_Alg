@@ -9,8 +9,6 @@ int main() {
     edges = blowup(edges, num_vertices);
     Graph g = constructGraph(edges, num_vertices);
     outputGraph(g, "test");
-    cout << endl;
-
     auto start = chrono::high_resolution_clock::now();
     if (isBiplanarSAT(edges, num_vertices)) {
         cout << "biplanarrr" << endl;

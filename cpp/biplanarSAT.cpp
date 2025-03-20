@@ -1,3 +1,4 @@
+#include <future>
 #include "biplanarSAT.h"
 
 // Biplanar SAT solver.
@@ -22,8 +23,15 @@ bool isBiplanarSAT(vector<Edge>& edges, int n) {
         }
         
         vector<Edge> kuratowskiEdges0, kuratowskiEdges1;
-        bool planarG0 = isPlanarSubgraph(g0, &kuratowskiEdges0);
-        bool planarG1 = isPlanarSubgraph(g1, &kuratowskiEdges1);
+        // run planarity tests async
+        auto futurePlanarG0 = std::async(std::launch::async, [&]() {
+            return isPlanarSubgraph(g0, &kuratowskiEdges0);
+        });
+        auto futurePlanarG1 = std::async(std::launch::async, [&]() {
+            return isPlanarSubgraph(g1, &kuratowskiEdges1);
+        });
+        bool planarG0 = futurePlanarG0.get();
+        bool planarG1 = futurePlanarG1.get();
         
         if (planarG0 && planarG1) {
             cout << "Graph is biplanar!" << endl;
