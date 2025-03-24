@@ -223,6 +223,22 @@ vector<Edge> maximalPlanarGraphEdge(int numVertices) {
     return edges;
 }
 
+/// Returns a planar graph edge set corresponding to stacking K_4's 
+/// on an edge, with [numStacks + 2] vertices.
+/// Assumes numStacks \geq 1.
+vector<Edge> k4stack(int numStacks) {
+    vector<Edge> edges = {{0, 1}, {1, 2}, {2, 0}, {3,0}, {3,1}, {3,2}};
+    
+    for (int i = 3; i < 2*(numStacks + 2); i=+2) {
+        edges.emplace_back(i, 0);
+        edges.emplace_back(i, 1);
+        edges.emplace_back(i, i+1);
+        edges.emplace_back(i+1, 0);
+        edges.emplace_back(i+1, 1);
+    }
+    return edges;
+}
+
 /// Returns a path graph edge-set on [numVertices] vertices.
 vector<Edge> pathGraphEdge(int numVertices) {
     vector<Edge> edges;

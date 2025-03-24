@@ -79,6 +79,11 @@ Graph completeGraph(int numVertices);
 /// Returns a maximal planar graph edge set with [numVertices] vertices.
 vector<Edge> maximalPlanarGraphEdge(int numVertices);
 
+/// Returns a planar graph edge set corresponding to stacking K_4's 
+/// on an edge, with [numStacks + 2] vertices.
+/// Assumes numStacks \geq 1.
+vector<Edge> k4stack(int numStacks);
+
 /// Returns path edge-set on [numVertices] vertices.
 vector<Edge> pathGraphEdge(int numVertices);
 
