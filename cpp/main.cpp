@@ -3,19 +3,19 @@
 #include "biplanarSAT.h"
 
 int main() {
-    int n = 3;
-    int num_vertices = n + 2;
+    int n = 30;
+    int num_vertices = 2*n + 2;
     vector<Edge> edges = k4stack(n);
-    /* edges = blowup(edges, num_vertices); */
-    Graph g = constructGraph(edges, num_vertices);
+    edges = blowup(edges, num_vertices);
+    Graph g = constructGraph(edges);
     outputGraph(g);
-    /* auto start = chrono::high_resolution_clock::now(); */
-    /* if (isBiplanarSAT(edges, num_vertices)) { */
-    /*     cout << "biplanarrr" << endl; */
-    /* } */
-    /* auto end = chrono::high_resolution_clock::now(); */
-    /* chrono::duration<double> elapsed = end - start; */
-    /* cout << "Took: " << elapsed.count() << " seconds.\n"; */
+    auto start = chrono::high_resolution_clock::now();
+    if (isBiplanarSAT(edges, num_vertices)) {
+        cout << "biplanarrr" << endl;
+    }
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = end - start;
+    cout << "Took: " << elapsed.count() << " seconds.\n";
 
     // (numVertLow, numVertHigh, numAttempts, bool independenceNumbe, bool chromaticNumber)
     /* computeCandidateGraphs(20, 80, 100000, true, true); */

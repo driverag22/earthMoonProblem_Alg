@@ -9,6 +9,21 @@ bool isBiplanarSAT(vector<Edge>& edges, int n) {
     // TODO: add cardinality constraints:
     //  at most 3n-6 true variables
     //  at most 3n-6 false variables <=> at least n-(3n-6) true
+
+    // Fix bottom edge to be fully present (for test with K_4 stack).
+    // Namely, edges (0,1), (0, 1'), (0', 1), (0', 1') all set to true,
+    // where 0' = 0+n, 1' = 1+n
+    vector<Edge> fixedEdges = {{0, 1}, {0, n+1}, {n, 1}, {n, n+1}};
+
+    for (auto& e : fixedEdges) {
+        auto it = find(edges.begin(), edges.end(), e);
+        if (it != edges.end()) {
+            int index = distance(edges.begin(), it) + 1;  // ensure 1-index
+            sat.addClause({index});
+        } else {
+            cerr << "Error: Required edge " << e.first << " - " << e.second << " not found in edge list." << endl;
+        }
+    }
     
     // SAT Solving Loop
     vector<int> assignment;
