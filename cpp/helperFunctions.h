@@ -20,7 +20,7 @@ using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS
 using Edge = pair<int, int>;
 
 /// Returns graph corresponding to given edge list.
-Graph constructGraph(vector<Edge>& edges, int numVertices);
+Graph constructGraph(vector<Edge>& edges, int numVertices = 1);
 
 /// Returns edge list corresponding to given graph.
 vector<Edge>* extractEdges(Graph& g);

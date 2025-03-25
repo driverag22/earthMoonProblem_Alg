@@ -1,8 +1,8 @@
 #include "helperFunctions.h"
 
 /// Returns graph corresponding to given edge list.
-Graph constructGraph(vector<Edge>& edges, int numVerices) {
-    Graph G(numVerices);
+Graph constructGraph(vector<Edge>& edges, int numVertices) {
+    Graph G(numVertices);
     for (const auto& e : edges)
         add_edge(e.first, e.second, G);
     return G;
@@ -224,12 +224,13 @@ vector<Edge> maximalPlanarGraphEdge(int numVertices) {
 }
 
 /// Returns a planar graph edge set corresponding to stacking K_4's 
-/// on an edge, with [numStacks + 2] vertices.
+/// on an edge, with [2*numStacks + 2] vertices (each stacked K_4 uses 
+/// two new vertices, and the two original edge vertices).
 /// Assumes numStacks \geq 1.
 vector<Edge> k4stack(int numStacks) {
     vector<Edge> edges = {{0, 1}, {1, 2}, {2, 0}, {3,0}, {3,1}, {3,2}};
     
-    for (int i = 3; i < 2*(numStacks + 2); i=+2) {
+    for (int i = 4; i < 2*(numStacks + 1); i=i+2) {
         edges.emplace_back(i, 0);
         edges.emplace_back(i, 1);
         edges.emplace_back(i, i+1);
