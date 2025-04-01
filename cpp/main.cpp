@@ -11,6 +11,7 @@ int main() {
 	    cout << "not planar!" << endl;
 	    return 0;
     }
+    printEdges(edges);
     edges = blowup(edges, n);
     auto start = chrono::high_resolution_clock::now(); 
     if (isBiplanarSAT(edges, n)) { 

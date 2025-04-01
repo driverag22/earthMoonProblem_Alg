@@ -307,7 +307,7 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
         edges.emplace_back(index(0,0), index(0, c));
         edges.emplace_back(index(0,0), index(rows - 1, c));
     }
-    for (int r = 1; r < rows - 1; r++) {
+    for (int r = 1; r < rows; r++) {
         edges.emplace_back(index(0,0), index(r, 0));
         edges.emplace_back(index(0,0), index(r, cols - 1));
     }
