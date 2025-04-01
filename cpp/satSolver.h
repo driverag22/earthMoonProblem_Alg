@@ -2,7 +2,7 @@
 #define SATSOLVER_H
 
 #include "helperFunctions.h"
-#include <minisat/core/Solver.h>
+#include "minisat/core/Solver.h"
 
 // SAT Solver Wrapper (Using MiniSat)
 class SatSolver {

@@ -3,22 +3,22 @@
 #include "biplanarSAT.h"
 
 int main() {
-    int n = 3;
-    int num_vertices = n + 2;
-    vector<Edge> edges = k4stack(n);
-    /* edges = blowup(edges, num_vertices); */
-    Graph g = constructGraph(edges, num_vertices);
-    outputGraph(g);
-    /* auto start = chrono::high_resolution_clock::now(); */
-    /* if (isBiplanarSAT(edges, num_vertices)) { */
-    /*     cout << "biplanarrr" << endl; */
-    /* } */
-    /* auto end = chrono::high_resolution_clock::now(); */
-    /* chrono::duration<double> elapsed = end - start; */
-    /* cout << "Took: " << elapsed.count() << " seconds.\n"; */
-
-    // (numVertLow, numVertHigh, numAttempts, bool independenceNumbe, bool chromaticNumber)
-    /* computeCandidateGraphs(20, 80, 100000, true, true); */
+    int cols = 3, rows = 3;
+    int n = cols * rows;
+    vector<Edge> edges = triangularGridMaxPlanarGraphEdge(rows, cols);
+    Graph g = constructGraph(edges, n);
+    if (!isPlanar(g)) {
+	    cout << "not planar!" << endl;
+	    return 0;
+    }
+    edges = blowup(edges, n);
+    auto start = chrono::high_resolution_clock::now(); 
+    if (isBiplanarSAT(edges, n)) { 
+	    cout << "biplanarrr" << endl; 
+    } 
+    auto end = chrono::high_resolution_clock::now(); 
+    chrono::duration<double> elapsed = end - start; 
+    cout << "Took: " << elapsed.count() << " seconds.\n"; 
     return 0;
 }
 
