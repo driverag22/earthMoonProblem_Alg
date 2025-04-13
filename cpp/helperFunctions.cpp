@@ -304,12 +304,24 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
             if (r + 1 < rows && c + 1 < cols) edges.emplace_back(index(r, c), index(r + 1, c + 1));
         }
     }
-    for (int c = 1; c < cols; c++) {
+    // for (int c = 1; c < cols; c++) {
+    //     edges.emplace_back(index(0,0), index(0, c));
+    //     edges.emplace_back(index(0,0), index(rows - 1, c));
+    // }
+    // for (int r = 1; r < rows; r++) {
+    //     edges.emplace_back(index(0,0), index(r, 0));
+    //     edges.emplace_back(index(0,0), index(r, cols - 1));
+    // }
+    for (int c = 2; c < cols; c++) {
         edges.emplace_back(index(0,0), index(0, c));
+    }
+    for (int c = 0; c < cols; c++) {
         edges.emplace_back(index(0,0), index(rows - 1, c));
     }
-    for (int r = 1; r < rows - 1; r++) {
+    for (int r = 2; r < rows - 1; r++) {
         edges.emplace_back(index(0,0), index(r, 0));
+    }
+    for (int r = 1; r < rows - 1; r++) {
         edges.emplace_back(index(0,0), index(r, cols - 1));
     }
     return edges;
