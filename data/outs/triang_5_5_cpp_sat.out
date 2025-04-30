@@ -1,0 +1,3 @@
+nohup: ignoring input
+./bin/triag5_5
+make: *** [Makefile:29: run] Killed

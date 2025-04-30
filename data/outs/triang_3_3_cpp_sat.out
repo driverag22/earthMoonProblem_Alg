@@ -1,0 +1,5 @@
+nohup: ignoring input
+mkdir -p bin  # Ensure bin/ exists
+g++ -std=c++17 -Wall -Wextra cpp/main.cpp cpp/candidateBuilder.cpp cpp/biplanarTester.cpp cpp/biplanarSAT.cpp cpp/satSolver.h cpp/helperFunctions.cpp -o bin/program -lboost_graph  -lminisat 
+./bin/program
+make: *** [Makefile:29: run] Terminated

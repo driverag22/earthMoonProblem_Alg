@@ -1,0 +1,3 @@
+nohup: ignoring input
+./bin/triang
+make: *** [Makefile:29: run] Killed
