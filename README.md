@@ -18,6 +18,8 @@ Both inherit functions form the module helperFunctions.
 │   ├── biplanarTester.cpp
 │   ├── candidateBuilder.h
 │   ├── candidateBuilder.cpp
+│   ├── biplanarSAT.h
+│   ├── biplanarSAT.cpp
 │   └── main.cpp
 ├── data/
 ├── python/
@@ -32,6 +34,7 @@ Both inherit functions form the module helperFunctions.
 │   ├── ilp/
 │   │   └── biplanarILP.py
 │   ├── sat/
+│   │   ├── biplanarBlowupSAT.py
 │   │   └── biplanarSAT.py
 │   └── requirements.txt
 └── Makefile
@@ -117,3 +120,6 @@ To simply draw an arbitrary graph (not partitioned) use `make draw` and give the
 Simply run `make ilp` and `make sat` respectively, passing as argument the file describing the graph.
 If a partition is found, it is saved to `data/SAT_partition.txt` and `data/ILP_partition.txt` respectively.
 
+### TODO
+A sat implementation of the biplanar tester has been written on cpp, although it might be a bit buggy.
+A sat implementation for blow-ups has been written on python.

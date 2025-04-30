@@ -60,6 +60,9 @@ ilp:
 sat:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/biplanarSAT.py $(filter-out $@,$(MAKECMDGOALS))
 
+sat2:
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/biplanarBlowupSAT.py $(filter-out $@,$(MAKECMDGOALS))
+
 # Clean compiled files
 clean:
 	rm -rf $(BIN_DIR) $(SRC_DIR)/*.o
