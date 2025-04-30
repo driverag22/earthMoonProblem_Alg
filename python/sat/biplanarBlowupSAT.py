@@ -7,29 +7,29 @@ from utils import read_graph, extract_vertices, output_graph, isPlanar, draw_par
 from collections import defaultdict
 
 
-def compute_dfs_tree(edges):
-    graph = defaultdict(set)
-    for u, v in edges:
-        graph[u].add(v)
-        graph[v].add(u)
-
-    # Find root: vertex with highest degree
-    root = max(graph.keys(), key=lambda x: len(graph[x]))
-
-    tree_edges = []
-    visited = set()
-    parent = {}
-
-    def dfs(u):
-        visited.add(u)
-        for v in graph[u]:
-            if v not in visited:
-                parent[v] = u
-                tree_edges.append((u, v))
-                dfs(v)
-
-    dfs(root)
-    return root, tree_edges
+# def compute_dfs_tree(edges):
+#     graph = defaultdict(set)
+#     for u, v in edges:
+#         graph[u].add(v)
+#         graph[v].add(u)
+# 
+#     # Find root: vertex with highest degree
+#     root = max(graph.keys(), key=lambda x: len(graph[x]))
+# 
+#     tree_edges = []
+#     visited = set()
+#     parent = {}
+# 
+#     def dfs(u):
+#         visited.add(u)
+#         for v in graph[u]:
+#             if v not in visited:
+#                 parent[v] = u
+#                 tree_edges.append((u, v))
+#                 dfs(v)
+# 
+#     dfs(root)
+#     return root, tree_edges
 
 
 def edge_to_var(edge, edge_to_var_map):
@@ -68,9 +68,10 @@ def solve_biplanar(edges, nodes):
     Solves the biplanar graph problem using a SAT solver
     for blown-up graph.
     """
+    print(edges)
     # get original edges (pre-blowup), find spanning rooted tree
-    original_edges = [edges[i] for i in range(0, len(edges), 4)]
-    root, tree_edges = compute_dfs_tree(original_edges)
+    # original_edges = [edges[i] for i in range(0, len(edges), 4)]
+    # root, tree_edges = compute_dfs_tree(original_edges)
 
     # map edges to SAT variables
     edge_to_var_map = {e: i+1 for i, e in enumerate(edges)}
