@@ -393,7 +393,7 @@ vector<Edge> cycleStackEdge(int m, int t) {
     for (int i = 0; i < prevCycleSize; ++i) {
         edges.push_back({finalVertex, prevCycleStart + i});
     }
-    // number of vertices is int n = m * ((1 << (t-1)) - 1) + 1;
+    // number of vertices is int n = m * ((1 << (t-1)) - 1) + 2;
     
     return edges;
 }
