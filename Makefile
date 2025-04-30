@@ -10,7 +10,7 @@ DATA_DIR = data
 PYTHON_DIR = python
 
 # Executable name
-TARGET = $(BIN_DIR)/t33_test
+TARGET = $(BIN_DIR)/program
 
 # Source and object files
 SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/biplanarSAT.cpp $(SRC_DIR)/satSolver.h $(SRC_DIR)/helperFunctions.cpp

@@ -106,6 +106,10 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols);
 /// put next vertex in a triangle and connect it to the three vertices).
 /// Assumes n \geq 3.
 vector<Edge> balancedMaxPlanarGraphEdge(int n);
+
+/// Returns hierarchical cycle edge-set starting from star vertex, 
+/// and ending with start vertex to outer cycle (for max planarity).
+vector<Edge> cycleStackEdge(int m, int t);
 ////// 
 
 ////// Graph operations

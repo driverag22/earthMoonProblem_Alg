@@ -304,6 +304,15 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
             if (r + 1 < rows && c + 1 < cols) edges.emplace_back(index(r, c), index(r + 1, c + 1));
         }
     }
+    int x = rows * cols; //extra vertex
+    for (int c = 0; c < cols; c++) 
+        edges.emplace_back(x, index(0, c));
+    for (int c = 0; c < cols; c++) 
+        edges.emplace_back(x, index(rows-1, c));
+    for (int r = 1; r < rows-1; r++) {
+        edges.emplace_back(x, index(r, 0));
+        edges.emplace_back(x, index(r, cols-1));
+    }
     // for (int c = 1; c < cols; c++) {
     //     edges.emplace_back(index(0,0), index(0, c));
     //     edges.emplace_back(index(0,0), index(rows - 1, c));
@@ -312,18 +321,18 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
     //     edges.emplace_back(index(0,0), index(r, 0));
     //     edges.emplace_back(index(0,0), index(r, cols - 1));
     // }
-    for (int c = 2; c < cols; c++) {
-        edges.emplace_back(index(0,0), index(0, c));
-    }
-    for (int c = 0; c < cols; c++) {
-        edges.emplace_back(index(0,0), index(rows - 1, c));
-    }
-    for (int r = 2; r < rows - 1; r++) {
-        edges.emplace_back(index(0,0), index(r, 0));
-    }
-    for (int r = 1; r < rows - 1; r++) {
-        edges.emplace_back(index(0,0), index(r, cols - 1));
-    }
+    // for (int c = 2; c < cols; c++) {
+    //     edges.emplace_back(index(0,0), index(0, c));
+    // }
+    // for (int c = 0; c < cols; c++) {
+    //     edges.emplace_back(index(0,0), index(rows - 1, c));
+    // }
+    // for (int r = 2; r < rows - 1; r++) {
+    //     edges.emplace_back(index(0,0), index(r, 0));
+    // }
+    // for (int r = 1; r < rows - 1; r++) {
+    //     edges.emplace_back(index(0,0), index(r, cols - 1));
+    // }
     return edges;
 }
 
@@ -345,6 +354,66 @@ vector<Edge> balancedMaxPlanarGraphEdge(int n) {
         Q.push({{i, vert[0], vert[2]}});
         Q.push({{i, vert[1], vert[2]}});
     }
+    return edges;
+}
+
+/// Returns hierarchical cycle edge-set starting from star vertex, 
+/// and ending with start vertex to outer cycle (for max planarity).
+vector<Edge> cycleStackEdge(int m, int t) {
+    vector<Edge> edges;
+    
+    // central vertex is 0 index
+    int nextVertex = 1; // next vertex index
+    
+    int prevCycleStart = nextVertex;
+    int prevCycleSize = m;
+    
+    // C_m
+    for (int i = 0; i < m; ++i) {
+        edges.push_back({prevCycleStart + i,
+                         prevCycleStart + ((i + 1) % m)});
+    }
+    // connect vertices of cycle to central vertex
+    for (int i = 0; i < m; ++i) {
+        int u = prevCycleStart + i;
+        edges.push_back({0, u});
+    }
+    
+    nextVertex = prevCycleStart + m;  // next available index
+    
+    // each new cycle has double the size of the previous cycle.
+    for (int iter = 3; iter <= t; ++iter) {
+        int newCycleSize = prevCycleSize * 2;
+        int newCycleStart = nextVertex;
+        
+        // Create the new cycle by connecting consecutive vertices.
+        for (int j = 0; j < newCycleSize; ++j) {
+            edges.push_back({newCycleStart + j, 
+                             newCycleStart + ((j + 1) % newCycleSize)});
+        }
+        
+        // For each vertex in the previous cycle, add bridging edges to three vertices in the new cycle.
+        for (int i = 0; i < prevCycleSize; ++i) {
+            int prevVertex = prevCycleStart + i;
+            int idx1 = (2 * i) % newCycleSize;
+            int idx2 = (2 * i + 1) % newCycleSize;
+            int idx3 = (2 * i - 1) % newCycleSize;
+            edges.push_back({prevVertex, newCycleStart + idx1});
+            edges.push_back({prevVertex, newCycleStart + idx2});
+            edges.push_back({prevVertex, newCycleStart + idx3});
+        }
+        
+        // Update for the next iteration.
+        prevCycleStart = newCycleStart;
+        prevCycleSize = newCycleSize;
+        nextVertex = newCycleStart + newCycleSize;
+    }
+
+    int finalVertex = nextVertex;
+    for (int i = 0; i < prevCycleSize; ++i) {
+        edges.push_back({finalVertex, prevCycleStart + i});
+    }
+    
     return edges;
 }
 //////

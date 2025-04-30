@@ -3,12 +3,16 @@
 #include "biplanarSAT.h"
 
 int main() {
-    int cols = 4, rows = 4;
-    int n = rows * cols;
-    vector<Edge> edges = triangularGridMaxPlanarGraphEdge(cols, rows);
+    int m = 4, t = 3;
+    int n = m * ((1 << (t-1)) - 1) + 2;
+    vector<Edge> edges = cycleStackEdge(m,t);
     printEdges(edges);
-    edges = blowup(edges, n);
+    // int a = 4, b = 4;
+    // n = a*b + 1;
+    // vector<Edge> edges = triangularGridMaxPlanarGraphEdge(a,b);
+    // printEdges(edges);
     cout << endl;
+    edges = blowup(edges, n);
     printEdges(edges);
     /* auto start = chrono::high_resolution_clock::now(); */
     /* if (isBiplanarSAT(edges, n)) { */
