@@ -56,10 +56,11 @@ drawBlowUp:
 ilp:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/ilp/biplanarILP.py $(filter-out $@,$(MAKECMDGOALS))
 
-# Run the ILP solver
+# Run the SAT solver
 sat:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/biplanarSAT.py $(filter-out $@,$(MAKECMDGOALS))
 
+# Run the SAT solver for blown-up graphs
 sat2:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/biplanarBlowupSAT.py $(filter-out $@,$(MAKECMDGOALS))
 
