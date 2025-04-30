@@ -3,14 +3,12 @@
 #include "biplanarSAT.h"
 
 int main() {
-    int m = 4, t = 3;
-    int n = m * ((1 << (t-1)) - 1) + 2;
-    vector<Edge> edges = cycleStackEdge(m,t);
-    printEdges(edges);
-    // int a = 4, b = 4;
-    // n = a*b + 1;
+    // int a = 3, b = 3;
+    // int n = a*b + 1;
     // vector<Edge> edges = triangularGridMaxPlanarGraphEdge(a,b);
-    // printEdges(edges);
+    int n = 4;
+    vector<Edge> edges = cycleGraphEdge(n);
+    printEdges(edges);
     cout << endl;
     edges = blowup(edges, n);
     printEdges(edges);

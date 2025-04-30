@@ -313,26 +313,6 @@ vector<Edge> triangularGridMaxPlanarGraphEdge(int rows, int cols) {
         edges.emplace_back(x, index(r, 0));
         edges.emplace_back(x, index(r, cols-1));
     }
-    // for (int c = 1; c < cols; c++) {
-    //     edges.emplace_back(index(0,0), index(0, c));
-    //     edges.emplace_back(index(0,0), index(rows - 1, c));
-    // }
-    // for (int r = 1; r < rows; r++) {
-    //     edges.emplace_back(index(0,0), index(r, 0));
-    //     edges.emplace_back(index(0,0), index(r, cols - 1));
-    // }
-    // for (int c = 2; c < cols; c++) {
-    //     edges.emplace_back(index(0,0), index(0, c));
-    // }
-    // for (int c = 0; c < cols; c++) {
-    //     edges.emplace_back(index(0,0), index(rows - 1, c));
-    // }
-    // for (int r = 2; r < rows - 1; r++) {
-    //     edges.emplace_back(index(0,0), index(r, 0));
-    // }
-    // for (int r = 1; r < rows - 1; r++) {
-    //     edges.emplace_back(index(0,0), index(r, cols - 1));
-    // }
     return edges;
 }
 
@@ -413,6 +393,7 @@ vector<Edge> cycleStackEdge(int m, int t) {
     for (int i = 0; i < prevCycleSize; ++i) {
         edges.push_back({finalVertex, prevCycleStart + i});
     }
+    // number of vertices is int n = m * ((1 << (t-1)) - 1) + 1;
     
     return edges;
 }
