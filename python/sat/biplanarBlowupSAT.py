@@ -7,29 +7,29 @@ from utils import read_graph, extract_vertices, output_graph, isPlanar, draw_par
 from collections import defaultdict
 
 
-# def compute_dfs_tree(edges):
-#     graph = defaultdict(set)
-#     for u, v in edges:
-#         graph[u].add(v)
-#         graph[v].add(u)
-# 
-#     # Find root: vertex with highest degree
-#     root = max(graph.keys(), key=lambda x: len(graph[x]))
-# 
-#     tree_edges = []
-#     visited = set()
-#     parent = {}
-# 
-#     def dfs(u):
-#         visited.add(u)
-#         for v in graph[u]:
-#             if v not in visited:
-#                 parent[v] = u
-#                 tree_edges.append((u, v))
-#                 dfs(v)
-# 
-#     dfs(root)
-#     return root, tree_edges
+def compute_dfs_tree(edges):
+    graph = defaultdict(set)
+    for u, v in edges:
+        graph[u].add(v)
+        graph[v].add(u)
+
+    # Find root: vertex with highest degree
+    root = max(graph.keys(), key=lambda x: len(graph[x]))
+
+    tree_edges = []
+    visited = set()
+    parent = {}
+
+    def dfs(u):
+        visited.add(u)
+        for v in graph[u]:
+            if v not in visited:
+                parent[v] = u
+                tree_edges.append((u, v))
+                dfs(v)
+
+    dfs(root)
+    return root, tree_edges
 
 
 def edge_to_var(edge, edge_to_var_map):
@@ -70,8 +70,8 @@ def solve_biplanar(edges, nodes):
     """
     print(edges)
     # get original edges (pre-blowup), find spanning rooted tree
-    # original_edges = [edges[i] for i in range(0, len(edges), 4)]
-    # root, tree_edges = compute_dfs_tree(original_edges)
+    original_edges = [edges[i] for i in range(0, len(edges), 4)]
+    root, tree_edges = compute_dfs_tree(original_edges)
 
     # map edges to SAT variables
     edge_to_var_map = {e: i+1 for i, e in enumerate(edges)}
@@ -124,43 +124,38 @@ def solve_biplanar(edges, nodes):
         # So add clause: v0 ∨ v1 ∨ ¬v2 ∨ ¬v3
         solver.add_clause([v0, v1, -v2, -v3])
 
-    # TODO: enforce this correctly
-    # for edge in tree_edges:
-    #     a, b = edge
-    #     # Find index of this edge's group
-    #     try:
-    #         i = original_edges.index((a, b))
-    #         forward = True
-    #     except ValueError:
-    #         i = original_edges.index((b, a))
-    #         a, b = b, a  # ensure (a, b) is in DFS order
-    #         forward = False
+    for edge in tree_edges:
+        a, b = edge
+        # Find index of this edge's group
+        try:
+            i = original_edges.index((a, b))
+            forward = True
+        except ValueError:
+            i = original_edges.index((b, a))
+            a, b = b, a  # ensure (a, b) is in DFS order
+            forward = False
 
-    #     e_group = edges[4*i:4*i+4]
-    #     v0 = edge_to_var(e_group[0], edge_to_var_map)  # (a, b)
-    #     v1 = edge_to_var(e_group[1], edge_to_var_map)  # (a′, b′)
-    #     if forward:
-    #         v2 = edge_to_var(e_group[2], edge_to_var_map)  # (b, a′)
-    #         v3 = edge_to_var(e_group[3], edge_to_var_map)  # (a, b′)
-    #     else:
-    #         # Need to reverse roles of v2 and v3
-    #         v2 = edge_to_var(e_group[3], edge_to_var_map)  # (b, a′)
-    #         v3 = edge_to_var(e_group[2], edge_to_var_map)  # (a, b′)
+        e_group = edges[4*i:4*i+4]
+        v0 = edge_to_var(e_group[0], edge_to_var_map)  # (a, b)
+        v1 = edge_to_var(e_group[1], edge_to_var_map)  # (a′, b′)
+        if forward:
+            v2 = edge_to_var(e_group[2], edge_to_var_map)  # (b, a′)
+            v3 = edge_to_var(e_group[3], edge_to_var_map)  # (a, b′)
+        else:
+            # Need to reverse roles of v2 and v3
+            v2 = edge_to_var(e_group[3], edge_to_var_map)  # (b, a′)
+            v3 = edge_to_var(e_group[2], edge_to_var_map)  # (a, b′)
 
-    #     # 3-1 case: singleton edge must be ab=v0 or a'b'=v1
-    #     # Forbid singleton is v2
-    #     solver.add_clause([v0, v1, -v2, v3])
-    #     # Forbid singleton is v3
-    #     solver.add_clause([v0, v1, v2, -v3])
+        # 3-1 case: singleton edge must be ab=v0 or a'b'=v1
+        # Forbid singleton is v2
+        solver.add_clause([v0, v1, -v2, v3])
+        # Forbid singleton is v3
+        solver.add_clause([v0, v1, v2, -v3])
 
-    #     # 2-2 case with center at b and b′:
-    #     #     enforce ba=v0, ba'=v2 True, b′a=v3, b′a′=v1 False
-    #     # Enforce v0 == v2 (ba, ba′ same color)
-    #     solver.add_clause([v0, -v2])
-    #     solver.add_clause([-v0, v2])
-    #     # Enforce v1 == v3 (b′a, b′a′ same color)
-    #     solver.add_clause([v1, -v3])
-    #     solver.add_clause([-v1, v3])
+        # 2-2 case with center at b and b′:
+        #   => enforce ba=v0, ba'=v2 True, b′a=v3, b′a′=v1 False
+        # Forbid ba=v0, ba'=v2 False, b'a=v3, b'a'=v1 True
+        solver.add_clause([v0, v2, -v1, -v3])
 
     # Create a process pool for parallel planarity checking.
     with concurrent.futures.ProcessPoolExecutor(max_workers=2) as executor:
