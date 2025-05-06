@@ -150,12 +150,14 @@ def solve_biplanar(edges, nodes):
         # 3-1 case: singleton edge must be ab=v0 or a'b'=v1
         # Forbid singleton is v2
         solver.add_clause([v0, v1, -v2, v3])
+        solver.add_clause([-v0, -v1, v2, -v3])
         # Forbid singleton is v3
         solver.add_clause([v0, v1, v2, -v3])
+        solver.add_clause([-v0, -v1, -v2, v3])
 
         # 2-2 case with center at b and b′:
         #   => enforce ba=v0, ba'=v2 True, b′a=v3, b′a′=v1 False
-        # Forbid ba=v0, ba'=v2 False, b'a=v3, b'a'=v1 True
+        # Forbid b,b' star-vertices with ba,ba' False, b'a,b'a' True
         solver.add_clause([v0, v2, -v1, -v3])
 
     # Create a process pool for parallel planarity checking.
