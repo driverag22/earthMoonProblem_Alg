@@ -1,5 +1,6 @@
 import networkx as nx
 import sys
+import time
 import concurrent.futures
 from pysat.solvers import Solver
 from pysat.card import CardEnc
@@ -196,6 +197,8 @@ def solve_biplanar(edges, nodes):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
+
     # get input and output files
     file_path = sys.argv[1] if len(sys.argv) > 1 else "data/test.txt"
     output_file = sys.argv[2] if len(sys.argv) > 2 else "data/SAT_partition.txt"
@@ -216,3 +219,6 @@ if __name__ == '__main__':
     else:
         print("Found no biplanar partition")
         output_graph(output_file.replace(".txt", "_failed.txt"), [edges])
+
+    elapsed_time = time.time() - start_time
+    print(f"\n\n\nTook: {elapsed_time:.2f} seconds")
