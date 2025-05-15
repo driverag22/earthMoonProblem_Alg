@@ -64,6 +64,9 @@ sat:
 sat2:
 	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/biplanarBlowupSAT.py $(filter-out $@,$(MAKECMDGOALS))
 
+satC:
+	PYTHONPATH=$(PYTHON_DIR) python $(PYTHON_DIR)/sat/blowUpExtendedSAT.py $(filter-out $@,$(MAKECMDGOALS))
+
 # Clean compiled files
 clean:
 	rm -rf $(BIN_DIR) $(SRC_DIR)/*.o
