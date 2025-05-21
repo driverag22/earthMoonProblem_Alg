@@ -25,15 +25,14 @@ int main() {
     //     pair(4, 5),
     //     pair(1, 5),
     // };
-    // int n = 7;
-    int n = 5; // spokes: 4,5
+    int n = 7; // spokes: 5,6
     vector<Edge> edges = wheelGraphEdge(n, 2);
     printEdges(edges);
     cout << endl;
     edges = blowup(edges, n);
-    static const array<array<int,3>,6> faces = {{
-        {{0,1,3}}, {{0,2,3}}, {{1,2,3}},
-        {{0,1,4}}, {{0,2,4}}, {{1,2,4}},
+    static const array<array<int,3>,10> faces = {{
+        {{0,1,6}}, {{1,2,6}}, {{2,3,6}}, {{3,4,6}}, {{4,0,6}},
+        {{0,1,5}}, {{1,2,5}}, {{2,3,5}}, {{3,4,5}}, {{4,0,5}},
     }};
     int nextVid = 2*n;
     for (auto &tri : faces) {
