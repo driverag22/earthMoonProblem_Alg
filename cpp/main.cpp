@@ -25,35 +25,38 @@ int main() {
     //     pair(4, 5),
     //     pair(1, 5),
     // };
-    int n = 7; // spokes: 5,6
+    int m = 5;
+    int n = m+2; // spokes: 5,6
     vector<Edge> edges = wheelGraphEdge(n, 2);
     printEdges(edges);
     cout << endl;
     edges = blowup(edges, n);
-    static const array<array<int,3>,10> faces = {{
-        {{0,1,6}}, {{1,2,6}}, {{2,3,6}}, {{3,4,6}}, {{4,0,6}},
-        {{0,1,5}}, {{1,2,5}}, {{2,3,5}}, {{3,4,5}}, {{4,0,5}},
-    }};
-    int nextVid = 2*n;
-    for (auto &tri : faces) {
-        int a = tri[0], b = tri[1], c = tri[2];
-        // their blown‐up twins are just +n
-        int a2 = a + n, b2 = b + n, c2 = c + n;
-
-        // create TWO interior guys per face
-        for (int t = 0; t < 2; ++t) {
-            int x = nextVid;
-            // hook x to both copies of each corner
-            edges.emplace_back(a,  x);
-            edges.emplace_back(a2, x);
-            edges.emplace_back(b,  x);
-            edges.emplace_back(b2, x);
-            edges.emplace_back(c,  x);
-            edges.emplace_back(c2, x);
-            nextVid++;
-        }
-    }
     printEdges(edges);
+    
+    // static const array<array<int,3>,10> faces = {{
+    //     {{0,1,6}}, {{1,2,6}}, {{2,3,6}}, {{3,4,6}}, {{4,0,6}},
+    //     {{0,1,5}}, {{1,2,5}}, {{2,3,5}}, {{3,4,5}}, {{4,0,5}},
+    // }};
+    // int nextVid = 2*n;
+    // for (auto &tri : faces) {
+    //     int a = tri[0], b = tri[1], c = tri[2];
+    //     // their blown‐up twins are just +n
+    //     int a2 = a + n, b2 = b + n, c2 = c + n;
+
+    //     // create TWO interior guys per face
+    //     for (int t = 0; t < 2; ++t) {
+    //         int x = nextVid;
+    //         // hook x to both copies of each corner
+    //         edges.emplace_back(a,  x);
+    //         edges.emplace_back(a2, x);
+    //         edges.emplace_back(b,  x);
+    //         edges.emplace_back(b2, x);
+    //         edges.emplace_back(c,  x);
+    //         edges.emplace_back(c2, x);
+    //         nextVid++;
+    //     }
+    // }
+    // printEdges(edges);
 
     /* auto start = chrono::high_resolution_clock::now(); */
     /* if (isBiplanarSAT(edges, n)) { */
