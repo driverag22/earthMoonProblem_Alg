@@ -100,9 +100,6 @@ def solve_biplanar(edges, nodes):
 
     # Partition 1:
     #          sum(1{x_e}) <= 3n - 6
-    # We encode equality since we could move edges from part0 to part1 until
-    # max planar
-    # cnf1 = CardEnc.equals(lits=edge_vars, bound=edgesLimit, encoding=1)
     cnf1 = CardEnc.atmost(lits=edge_vars, bound=edgesLimit, encoding=1)
     for clause in cnf1.clauses:
         solver.add_clause(clause)
