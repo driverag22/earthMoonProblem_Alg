@@ -53,7 +53,7 @@ bool isPlanarSubgraph(Graph& g, vector<Edge>* kuratowskiEdges) {
 }
 
 /// Helper function to output graph.
-void outputGraph(Graph& g, string filename) {
+void outputGraph(const Graph& g, string filename) {
     ofstream file("data/" + filename + ".txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;
@@ -66,7 +66,7 @@ void outputGraph(Graph& g, string filename) {
 }
 
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2, string filename) {
+void outputPartitions(const Graph& g1, Graph& g2, string filename) {
     ofstream file("data/" + filename + ".txt");
     if (!file) {
         cerr << "Error opening file for writing!" << endl;

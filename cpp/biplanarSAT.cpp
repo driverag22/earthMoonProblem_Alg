@@ -38,7 +38,7 @@ bool isBiplanarSAT(vector<Edge>& edges, int n) {
             cout << "Graph is biplanar!" << endl;
             /* printGraph(g0); */
             /* printGraph(g1); */
-            outputPartitions(g0, g1, "trianblowup");
+            outputPartitions(g0, g1, "examplePartitions");
             return true;
              // Add a blocking clause to prevent the same solution again
             /* vector<int> blockingClause; */

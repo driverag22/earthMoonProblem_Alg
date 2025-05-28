@@ -33,10 +33,10 @@ bool isPlanar(Graph& g);
 bool isPlanarSubgraph(Graph& edges, vector<Edge>* violatingEdges);
 
 /// Helper function to output graph.
-void outputGraph(Graph& g, string filename = "candidate");
+void outputGraph(const Graph& g, string filename = "candidate");
 
 /// Helper function to output edge partitions.
-void outputPartitions(Graph& g1, Graph& g2, string filename = "partitions");
+void outputPartitions(const Graph& g1, Graph& g2, string filename = "partitions");
 
 /// Prints edges of a given graph (for debugging purposes).
 void printGraph(Graph& g);
