@@ -66,6 +66,7 @@ bool isBiplanar(vector<Edge>& edges, int index, Graph& g1, Graph& g2) {
 }
 
 void testBiplanarity(vector<Edge>* edges, int n) {
+    maxEdges = 3 * n - 6;
     if ((edges->size()) > (size_t)2*maxEdges) {
         cout << "Graph cannot be biplanar, 6n-12 = " 
             << 2*maxEdges << " but number of edges is "

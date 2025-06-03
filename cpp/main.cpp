@@ -1,29 +1,48 @@
 #include "candidateBuilder.h"
 #include "biplanarSAT.h"
+#include "biplanarTester.h"
 
 int main() {
-    ////////////////
-    // SAT solver //
-    ////////////////
-    // int a = 5, b = 4, n = a * b;
-    // vector<Edge> edges = strongProductEdge(pathGraphEdge(a), a, completeGraphEdge(b), b);
+    /////////////////////////
+    // Backtracking vs SAT //
+    /////////////////////////
+    int n; vector<Edge> edges;
+
+    int a = 5, b = 4;
+    n = a * b;
+    edges = strongProductEdge(pathGraphEdge(a), a, completeGraphEdge(b), b);
+    removeVertexEdges(edges, 0);
+
+    auto start = chrono::high_resolution_clock::now();
+    testBiplanarity(&edges, n);
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed = end - start;
+    cout << "Took: " << elapsed.count() << " seconds.\n";
+
+    start = chrono::high_resolution_clock::now();
+    if (isBiplanarSAT(edges, n)) {
+        cout << "biplanar" << endl;
+    }
+    end = chrono::high_resolution_clock::now();
+    chrono::duration<double> elapsed2 = end - start;
+    cout << "Took: " << elapsed2.count() << " seconds.\n";
+
+    // n = 8;
+    // edges = completeGraphEdge(n);
+
     // auto start = chrono::high_resolution_clock::now();
-    // if (isBiplanarSAT(edges, n)) {
-    //     cout << "biplanar" << endl;
-    // }
+    // testBiplanarity(&edges, n);
     // auto end = chrono::high_resolution_clock::now();
     // chrono::duration<double> elapsed = end - start;
     // cout << "Took: " << elapsed.count() << " seconds.\n";
 
-    // int n = 8;
-    // vector<Edge> edges = completeGraphEdge(n);
-    // auto start = chrono::high_resolution_clock::now();
+    // start = chrono::high_resolution_clock::now();
     // if (isBiplanarSAT(edges, n)) {
     //     cout << "biplanar" << endl;
     // }
-    // auto end = chrono::high_resolution_clock::now();
-    // chrono::duration<double> elapsed = end - start;
-    // cout << "Took: " << elapsed.count() << " seconds.\n";
+    // end = chrono::high_resolution_clock::now();
+    // chrono::duration<double> elapsed2 = end - start;
+    // cout << "Took: " << elapsed2.count() << " seconds.\n";
 
     //////////////////////
     // Candidate finder //
@@ -35,8 +54,8 @@ int main() {
     // Blow-up of biwheel //
     ////////////////////////
     // int m = 5;
-    // int n = m+2; // spokes: 5,6
-    // vector<Edge> edges = wheelGraphEdge(n, 2);
+    // n = m+2; // spokes: 5,6
+    // edges = wheelGraphEdge(n, 2);
     // printEdges(edges);
     // cout << endl;
     // edges = blowup(edges, n);
