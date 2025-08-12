@@ -1,12 +1,17 @@
 # Earth-Moon problem Algorithms
-Algorithms for work on the earth-moon problem.
-Current two different algorithms (sharing helper functions):
+Algorithms for work on the earth-moon problem/for biplanarity testing.
+
+NOTE: Much of the information on the README is out of date, feel free to contact me if you have any questions.
+
+Current three different algorithms (sharing helper functions):
 
  - biplanarTester: backtracking algorithm to determine if a given graph is biplanar.
  - candidateBuilder: brute-force algorithm that searches for thickness-2 graphs of a chosen 
  chromatic number.
+ - There are also some SAT-based biplanar tester algorithms, which have improved efficiency over the biplanar 
+ tester using backtracking. These were (sadly) mostly developed in python instead of cpp.
 
-Both inherit functions form the module helperFunctions.
+All inherit functions form the module helperFunctions.
 
 ## Directory structure
 ```
