@@ -1,17 +1,20 @@
 # Earth-Moon problem Algorithms
 Algorithms for work on the earth-moon problem/for biplanarity testing.
 
-NOTE: Much of the information on the README is out of date, feel free to contact me if you have any questions.
+**NOTE**: Much of the information on the README is out of date, feel free to contact me if you have any questions.
+
+**NOTE 2**: Some of the python requirements are currently deprecated.
 
 Current three different algorithms (sharing helper functions):
 
- - biplanarTester: backtracking algorithm to determine if a given graph is biplanar.
- - candidateBuilder: brute-force algorithm that searches for thickness-2 graphs of a chosen 
+ - `biplanarTester`: backtracking algorithm to determine if a given graph is biplanar.
+ - `candidateBuilder`: brute-force algorithm that searches for thickness-2 graphs of a chosen 
  chromatic number.
- - There are also some SAT-based biplanar tester algorithms, which have improved efficiency over the biplanar 
- tester using backtracking. These were (sadly) mostly developed in python instead of cpp.
+ - There are also some SAT-based biplanar tester algorithms, which have improved efficiency (I believe) over the 
+ backtracking-based biplanar tester. These were (sadly) mostly developed in python instead of cpp.
 
-All inherit functions form the module helperFunctions.
+
+All inherit functions form the module `helperFunctions`.
 
 ## Directory structure
 ```
@@ -127,4 +130,4 @@ If a partition is found, it is saved to `data/SAT_partition.txt` and `data/ILP_p
 
 ### TODO
 A sat implementation of the biplanar tester has been written on cpp, although it might be a bit buggy.
-A sat implementation for blow-ups has been written on python.
+A sat implementation for blow-ups of graphs has been written on python: it first computes the blow-up of the graph, and then tries to find a biplanar partition.
