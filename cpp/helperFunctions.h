@@ -73,7 +73,7 @@ Graph pathGraph(int numVertices);
 /// Returns cycle Graph on [numVertices] vertices.
 Graph cycleGraph(int numVertices);
 
-/// Returns complet Graph on [numVertices] vertices.
+/// Returns complete Graph on [numVertices] vertices.
 Graph completeGraph(int numVertices);
 
 /// Returns a maximal planar graph edge set with [numVertices] vertices.

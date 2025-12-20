@@ -58,7 +58,7 @@ void computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts, bo
             Graph g = graphUnion(g1, g2);
 
             // save graph if chromatic number 
-            // (possbly) \geq 10 or 9
+            // (possibly) \geq 10 or 9
             // we use: 
             //     \chi \geq n/(\alpha) \geq 10,9 
             //                <=> 
