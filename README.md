@@ -103,7 +103,7 @@ You can also manually define the graph.
 Once the edge-set is defined, simply call `isBiplanar(edges, 0, g1, g2);` (also from `main.cpp`), where `g1,g2` are empty graphs on n vertices.
 To avoid symmetric case, you can consider adding the first edge to `g1` and instead calling `isBiplanar(edges, 1, g1, g2);`.
 
-If a partition is found, it will be ouput `data/partitions.txt`.
+If a partition is found, it will be output `data/partitions.txt`.
 
 ### Candidate builder
 
@@ -119,7 +119,7 @@ Drawing the graph (if biplanar) can be done via `make drawPart` (to get the grap
 and `make plane` to get the plane drawings of both partitions.
 By default it will plot the partitions from `data/partitions.txt`, but you can choose a different one by passing 
 the path as an argument (e.g. `make draw data/p3_k4_partitioned.txt`).
-For exampel, to plot a candidate graph, you'd have to call `make drawPart data/candidates10/graph_10_50.txt` (or with `make plane`).
+For example, to plot a candidate graph, you'd have to call `make drawPart data/candidates10/graph_10_50.txt` (or with `make plane`).
 
 To simply draw an arbitrary graph (not partitioned) use `make draw` and give the (relative) file path as input when asked
 (e.g. `c5_44443.txt`), or pass it directly (e.g. `make draw c5_44443.txt`).
