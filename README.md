@@ -111,7 +111,7 @@ Simply call `computeCandidateGraphs(int numVertLow, int numVertHigh, int numAtte
 are respectively the lower number of vertices to find a graph for, the highest number of vertices, and the number of attempts per each number of vertices.
 
 If finds a biplanar graph of chromatic number \geq 9 or 10, the graph and the two partitions are saved at:
-   - `data/candidates{x}/graph_{i}_{n}.txt`
+   - `data/candidates{x}/graph_{n}_{i}.txt`
 where `{x}` is 9 or 10 (chromatic number), `{i}` current attempt, and `{n}` number of vertices of the graph.
 
 ### Graph visualizing
