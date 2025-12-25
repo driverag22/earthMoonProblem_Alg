@@ -2,13 +2,15 @@
 #define SATSOLVER_H
 
 #include "helperFunctions.h"
-#include <minisat/core/Solver.h>
+#include "glucose/core/Solver.h"
 
-// SAT Solver Wrapper (Using MiniSat)
+using namespace Glucose;
+
+// SAT Solver Wrapper (Using Glucose)
 class SatSolver {
 public:
-    Minisat::Solver solver;
-    vector<Minisat::Var> vars;
+    Solver solver;
+    vector<Var> vars;
     
     SatSolver(int numEdges) {
         vars.resize(numEdges);
@@ -19,9 +21,9 @@ public:
 
     // Add a clause (OR constraint)
     void addClause(vector<int> literals) {
-        Minisat::vec<Minisat::Lit> clause;
+        vec<Lit> clause;
         for (int lit : literals) {
-            clause.push(Minisat::mkLit(vars[abs(lit) - 1], lit < 0));
+            clause.push(mkLit(vars[abs(lit) - 1], lit < 0));
         }
         solver.addClause(clause);
     }
@@ -31,7 +33,7 @@ public:
         if (!solver.solve()) return false;
         assignment.resize(vars.size());
         for (size_t i = 0; i < vars.size(); ++i) {
-            assignment[i] = (solver.modelValue(vars[i]) == Minisat::l_True);
+            assignment[i] = (solver.modelValue(vars[i]) == l_True);
         }
         return true;
     }

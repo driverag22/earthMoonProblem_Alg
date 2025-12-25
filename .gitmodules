@@ -1,0 +1,3 @@
+[submodule "cpp/glucose"]
+	path = cpp/glucose
+	url = https://github.com/audemard/glucose.git
