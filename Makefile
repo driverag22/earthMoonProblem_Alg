@@ -1,7 +1,11 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = -lboost_graph  -lminisat # Boost Graph Library
+CXXFLAGS = -std=c++17 -w \
+	-Icpp/glucose \
+	-Icpp/glucose/core \
+	-Icpp/glucose/mtl \
+	-Icpp/glucose/simp
+LDFLAGS = -lboost_graph -lz  # Boost Graph Library
 
 # Directories
 SRC_DIR = cpp
@@ -12,10 +16,23 @@ PYTHON_DIR = python
 # Executable name
 TARGET = $(BIN_DIR)/program
 
-# Source and object files
-# SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/biplanarSAT.cpp $(SRC_DIR)/satSolver.h $(SRC_DIR)/helperFunctions.cpp
-SRCS = $(SRC_DIR)/main.cpp $(SRC_DIR)/candidateBuilder.cpp $(SRC_DIR)/biplanarTester.cpp $(SRC_DIR)/biplanarSAT.cpp $(SRC_DIR)/helperFunctions.cpp
-OBJS = $(SRCS:.cpp=.o)
+# Source files
+SRCS = cpp/main.cpp \
+       cpp/candidateBuilder.cpp \
+       cpp/biplanarTester.cpp \
+       cpp/biplanarSAT.cpp \
+       cpp/helperFunctions.cpp \
+       cpp/glucose/core/Solver.cc \
+       cpp/glucose/core/lcm.cc \
+       cpp/glucose/parallel/ClausesBuffer.cc \
+       cpp/glucose/parallel/MultiSolvers.cc \
+       cpp/glucose/parallel/ParallelSolver.cc \
+       cpp/glucose/parallel/SharedCompanion.cc \
+       cpp/glucose/parallel/SolverCompanion.cc \
+       cpp/glucose/parallel/SolverConfiguration.cc \
+       cpp/glucose/simp/SimpSolver.cc \
+       cpp/glucose/utils/Options.cc \
+       cpp/glucose/utils/System.cc
 
 # Default rule: Compile everything
 all: $(TARGET)
