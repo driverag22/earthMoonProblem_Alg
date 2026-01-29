@@ -1,14 +1,97 @@
 #include <future>
 #include "biplanarSAT.h"
 
+// Sinz sequential counter encoding for at-most-k on a list of literals.
+static void addAtMostK(SatSolver& sat, const vector<Lit>& lits, int k) {
+    int m = lits.size();
+    if (k <= 0) {
+        for (const auto& lit : lits) {
+            vec<Lit> clause;
+            clause.push(~lit);
+            sat.solver.addClause(clause);
+        }
+        return;
+    }
+    if (m <= k) return; // no constraint needed
+
+    vector<vector<Lit>> s(m, vector<Lit>(k));
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < k; ++j) {
+            Var v = sat.solver.newVar();
+            s[i][j] = mkLit(v, false);
+        }
+    }
+
+    // (¬x1 ∨ s1,1)
+    {
+        vec<Lit> clause;
+        clause.push(~lits[0]);
+        clause.push(s[0][0]);
+        sat.solver.addClause(clause);
+    }
+
+    for (int i = 1; i < m; ++i) {
+        // (¬xi ∨ si,1)
+        {
+            vec<Lit> clause;
+            clause.push(~lits[i]);
+            clause.push(s[i][0]);
+            sat.solver.addClause(clause);
+        }
+        // (¬s(i-1),1 ∨ si,1)
+        {
+            vec<Lit> clause;
+            clause.push(~s[i-1][0]);
+            clause.push(s[i][0]);
+            sat.solver.addClause(clause);
+        }
+        for (int j = 1; j < k; ++j) {
+            // (¬s(i-1),j-1 ∨ si,j)
+            {
+                vec<Lit> clause;
+                clause.push(~s[i-1][j-1]);
+                clause.push(s[i][j]);
+                sat.solver.addClause(clause);
+            }
+            // (¬xi ∨ ¬s(i-1),j ∨ si,j)
+            {
+                vec<Lit> clause;
+                clause.push(~lits[i]);
+                clause.push(~s[i-1][j]);
+                clause.push(s[i][j]);
+                sat.solver.addClause(clause);
+            }
+        }
+    }
+
+    for (int i = k; i < m; ++i) {
+        // (¬xi ∨ ¬s(i-1),k-1)
+        vec<Lit> clause;
+        clause.push(~lits[i]);
+        clause.push(~s[i-1][k-1]);
+        sat.solver.addClause(clause);
+    }
+}
+
 // Biplanar SAT solver.
 bool isBiplanarSAT(vector<Edge>& edges, int n) {
     int numEdges = edges.size();
     SatSolver sat(numEdges);
     
-    // TODO: add cardinality constraints:
+    // Cardinality constraints:
     //  at most 3n-6 true variables
     //  at most 3n-6 false variables <=> at least n-(3n-6) true
+    int maxPerPartition = 3 * n - 6;
+    if (maxPerPartition < 0) maxPerPartition = 0;
+    vector<Lit> trueLits, falseLits;
+    trueLits.reserve(numEdges);
+    falseLits.reserve(numEdges);
+    for (int i = 0; i < numEdges; ++i) {
+        trueLits.push_back(mkLit(sat.vars[i], false));
+        falseLits.push_back(mkLit(sat.vars[i], true)); // counts ¬xi
+    }
+    addAtMostK(sat, trueLits, maxPerPartition);
+    addAtMostK(sat, falseLits, maxPerPartition);
 
     // SAT Solving Loop
     vector<int> assignment;
