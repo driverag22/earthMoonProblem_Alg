@@ -65,7 +65,7 @@ static void addAtMostK(SatSolver& sat, const vector<Lit>& lits, int k) {
     }
 
     for (int i = k; i < m; ++i) {
-        // (¬xi ∨ ¬s(i-1),k)
+        // (¬xi ∨ ¬s(i-1),k-1)
         vec<Lit> clause;
         clause.push(~lits[i]);
         clause.push(~s[i-1][k-1]);
