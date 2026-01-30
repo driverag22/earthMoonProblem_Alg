@@ -110,7 +110,7 @@ If a partition is found, it will be output `data/partitions.txt`.
 Simply call `computeCandidateGraphs(int numVertLow, int numVertHigh, int numAttempts);` from `main.cpp` where `numVertLow, numVertHigh, numAttempts`
 are respectively the lower number of vertices to find a graph for, the highest number of vertices, and the number of attempts per each number of vertices.
 
-If finds a biplanar graph of chromatic number ≥ 9, the graph and the two partitions are saved at:
+If finds a biplanar graph of chromatic number ≥ 9 or 10, the graph and the two partitions are saved at:
    - `data/candidates{x}/graph_{n}_{i}.txt`
 where `{x}` is 9 or 10 (chromatic number), `{i}` current attempt, and `{n}` number of vertices of the graph.
 
