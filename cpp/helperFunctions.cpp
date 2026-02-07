@@ -1,4 +1,5 @@
 #include "helperFunctions.h"
+#include <algorithm>
 
 /// Returns graph corresponding to given edge list.
 Graph constructGraph(vector<Edge>& edges, int numVertices) {
@@ -523,16 +524,22 @@ void assignEdgeIndices(Graph& G) {
 
 /// Prints progress bar.
 void printProgressBar(int progress, int total, string message) {
-    float percentage = (float)progress / total;
-    float pos = 50.0 * percentage; //50 = width
+    if (total <= 0) return;
 
-    cout << "\033[2A\033[2K\r" << message << endl; // Move up and clear line
-    cout << "\033[2K\r["; // clear line
-    for (int i = 0; i < 50; ++i) {
-        if (i < pos) cout << "=";
-        else if (i == pos) cout << ">";
+    float percentage = (float)progress / total;
+    percentage = std::clamp(percentage, 0.f, 1.f);
+    const int width = 50;
+    int filled = static_cast<int>(percentage * width);
+    bool isComplete = (progress >= total);
+    if (!isComplete && filled >= width) filled = width - 1;
+    int percentDisplay = isComplete ? 100 : std::min(99, static_cast<int>(percentage * 100.0f));
+    bool showArrow = (!isComplete && filled > 0);
+
+    cout << "\r\033[2K" << message << " [";
+    for (int i = 0; i < width; ++i) {
+        if (i < filled) cout << "=";
+        else if (showArrow && i == filled) cout << ">";
         else cout << " ";
     }
-    cout << "] " << int(percentage * 100.0) << "%" << endl;
-    cout.flush();
+    cout << "] " << percentDisplay << "%\r" << flush;
 }
